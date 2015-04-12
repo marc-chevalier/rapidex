@@ -1,9 +1,9 @@
-MEGASAT
+RAPIDEX
 =======
 
 Petit projet de M1 : implémentation d'un simplexe avec tout plein d'options et autres bugs.
 
-Un gros README bien illisible sera bientôt disponible dans le fichier README.fm (oui, c'est vraiment un
+Un gros README bien illisible est disponible dans le fichier README.fm (oui, c'est vraiment un
 foutu manuel...).
 
 Sa seule dépendance, mis à part un compilo C++11 potable (Clang ou GCC), est une version pas trop
