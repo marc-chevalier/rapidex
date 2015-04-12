@@ -6,6 +6,7 @@ NAZI= $(NAZIBASE) -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsugge
 CFLAGS=$(NAZI)
 LDFLAGS=
 EXEC=setup rapidex
+EXECLATEX=setup rapidexlatex
 LEX=flex
 YACC=bison
 
@@ -50,6 +51,9 @@ DEPS := $(patsubst src/%.c,obj/%.d,$(patsubst src/%.cpp,obj/%.d,$(SRCS)))
 .PHONY: clean
 
 all: $(EXEC)
+
+latex: CC=g++ -lgmpxx -lgmp -D LATEX
+latex: $(EXEC)
 
 debug: CC=g++ -lgmpxx -lgmp -D DEBUG
 debug: $(EXEC)
@@ -110,7 +114,11 @@ rapidex: CMD = $(CC) obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o 
 rapidex: obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS)
 	@$(PRINT_LD)
 	@mkdir -p $(dir $@)
-	@$(BUILD_CMD)
+
+rapidexlatex: CMD = $(CC) obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS) $(LDFLAGS) -o $@
+rapidexlatex: obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS)
+	@$(PRINT_LD)
+	@mkdir -p $(dir $@)
 
 clean:
 	@$(PRINT_RM)

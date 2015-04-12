@@ -15,8 +15,8 @@ ancienne de GNU Bison et GMP.
 LICENCE PUBLIQUE RIEN À BRANLER
 Version 1, Mars 2009
 
-Copyright (C) 2014 Marc Chevalier
-Copyright (C) 2014 Thomas Pellissier Tanon
+Copyright (C) 2015 Marc Chevalier
+Copyright (C) 2015 Thomas Pellissier Tanon
 
 La copie et la distribution de copies exactes de cette licence sont
 autorisées, et toute modification est permise à condition de changer
