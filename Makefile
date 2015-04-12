@@ -114,11 +114,13 @@ rapidex: CMD = $(CC) obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o 
 rapidex: obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS)
 	@$(PRINT_LD)
 	@mkdir -p $(dir $@)
+	@$(BUILD_CMD)
 
 rapidexlatex: CMD = $(CC) obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS) $(LDFLAGS) -o $@
 rapidexlatex: obj/.o obj/SimplexParser.o obj/SimplexLexer.o obj/driver.o obj/lexer.o $(OBJS)
 	@$(PRINT_LD)
 	@mkdir -p $(dir $@)
+	@$(BUILD_CMD)
 
 clean:
 	@$(PRINT_RM)
