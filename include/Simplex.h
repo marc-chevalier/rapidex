@@ -10,7 +10,7 @@ public:
         UNBOUNDED,
         SOLUTION,
     };
-    Simplex(LinearProgram program, const std::string& filename, bool verbose=false);
+    Simplex(LinearProgram program, const std::string& filename, bool verbose=false, const std::string& compiler="pdflatex");
     ~Simplex();
     SolutionType solve(const std::string& variableName);
     mpq_class getOpt() const;

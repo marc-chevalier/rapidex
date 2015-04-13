@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Simplex::Simplex(LinearProgram program_, const string& filename, bool verboseLatex_) :
-    program(program_), dictionary(Dictionary()), latex(filename), verboseLatex(verboseLatex_)
+Simplex::Simplex(LinearProgram program_, const string& filename, bool verboseLatex_, const string& compiler) :
+    program(program_), dictionary(Dictionary()), latex(filename, compiler), verboseLatex(verboseLatex_)
 {
 #ifdef LATEX
     verboseLatex = true;
@@ -99,7 +99,8 @@ Simplex::SolutionType Simplex::firstPhase()
 #endif
     if(!dictionary.isFirstPhaseNeeded())
     {
-        latex.appendString("La première phase n'est pas utile : 0 appartient au polytope. ");
+        if(verboseLatex)
+            latex.appendString("La première phase n'est pas utile : 0 appartient au polytope. ");
 #ifdef DEBUG
         cout<<"Inutile"<<endl;
 #endif

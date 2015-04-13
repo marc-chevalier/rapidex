@@ -5,8 +5,8 @@ using namespace std;
 
 string genTitle();
 
-LatexPrinter::LatexPrinter(const string& filename_) :
-     filename(filename_), file(), isOpen(false)
+LatexPrinter::LatexPrinter(const string& filename_, const string& compiler_) :
+     filename(filename_), file(), isOpen(false), compiler(compiler_)
 {}
 
 LatexPrinter::~LatexPrinter()
@@ -20,6 +20,8 @@ void LatexPrinter::close()
     {
         finaliseCodeMinimal();
         file.close();
+        if(compiler != "")
+            system((compiler+" "+filename+" > /dev/null").c_str());
     }
 }
 

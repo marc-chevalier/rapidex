@@ -31,11 +31,13 @@ int main(int argc, char* argv[])
     {
         cout<<endl<<"Syntaxes :"<<endl;
         cout<<"    ./rapidex file"<<endl<<endl;
-        cout<<"-l / --latex             Détail de la résolution en LaTeX"<<endl;
+        cout<<"-l / --latex             Détail de la résolution en LaTeX, par défaut, un fichier pdf est produit (cf. infra)"<<endl;
         cout<<"--output=file            Enregistrer le fichier latex dans file"<<endl<<endl;
         cout<<"-d / --dual              Afficher le dual"<<endl;
         cout<<"-dr / --dual-resol       Résoudre le dual au lieu du problème initial"<<endl;
         cout<<"--funky                  Amélioration du dual et de la détermination d'un axe divergent"<<endl;
+        cout<<"--dvi                    Produit un fichier dvi à la place du pdf en utilisant latex"<<endl;
+        cout<<"--tex                    Ne compile pas le .tex obtenu"<<endl;
         cout<<"-v / --verbose           Verbose"<<endl<<endl;
         cout<<"-h / --help              Vous y êtes"<<endl<<endl;
         return EXIT_SUCCESS;
@@ -81,7 +83,19 @@ int main(int argc, char* argv[])
         delete nameDispenser;
     }
 
-    Simplex simplex(lp, arguments.getParameter("output", arguments.getArgument(0)+".tex"), arguments.getOption("-latex")||arguments.getOption("l"));
+    string compiler = "pdflatex";
+    if(arguments.getOption("-tex") && arguments.getOption("-dvi"))
+    {
+        cout<<"Options --tex et --dvi incompatibles"<<endl;
+        return EXIT_FAILURE;
+    }
+    else if(arguments.getOption("-tex"))
+        compiler = "";
+    else if(arguments.getOption("-dvi"))
+        compiler = "latex";
+
+
+    Simplex simplex(lp, arguments.getParameter("output", arguments.getArgument(0)+".tex"), arguments.getOption("-latex")||arguments.getOption("l"), compiler);
 
     AbstractVariableNameDispenser* nameDispenser;
     if(arguments.getOption("-funky"))

@@ -80,7 +80,7 @@ string ArgumentsParser::getParameter(string nom, string def) const
 
 vector<string> ArgumentsParser::getNomsOptions()
 {
-    vector<string> liste(8);
+    vector<string> liste(10);
     liste[0]="v";
     liste[1]="l";
     liste[2]="-latex";
@@ -89,6 +89,8 @@ vector<string> ArgumentsParser::getNomsOptions()
     liste[5]="dr";
     liste[6]="-dual-resol";
     liste[7]="-funky";
+    liste[8]="-tex";
+    liste[9]="-dvi";
     return liste;
 }
 
