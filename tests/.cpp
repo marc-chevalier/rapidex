@@ -95,7 +95,8 @@ string genRandomColor()
     colors.push_back("CornflowerBlue");
     colors.push_back("Cyan");
     colors.push_back("Dandelion");
-    colors.push_back("DarkOrchid");colors.push_back("Emerald");
+    colors.push_back("DarkOrchid");
+    colors.push_back("Emerald");
     colors.push_back("ForestGreen");
     colors.push_back("Fuchsia");
     colors.push_back("Goldenrod");
