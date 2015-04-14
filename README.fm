@@ -10,7 +10,7 @@ Les options.
 
 -h / --help : affiche l'aide du programme.
 
--l / --latex : produit un fichier LaTeX (.tex) détaillant la résolution.
+-l / --latex : produit un fichier LaTeX (.tex) détaillant la résolution et le compile en utilisant pdflatex (cf infra.).
 
 --output=file : le fichier LaTeX produit est enregistrer sous le nom donné à la place de file. Sans cette précision, le fichier est nommée d'après le fichier d'entrée en ajoutant l'extension ".tex".
 
@@ -18,10 +18,16 @@ Les options.
 
 -dr / --dual-resol : le programme résoud le problème dual. Cette option est indépendante de la précédente. On peut afficher le problème dual et résoudre le primal, afficher le dual et le résoudre ou encore ne rien afficher mais résoudre tout de même le dual. Pour des raisons évidentes, il est impossible d'afficher le problème primal.
 
+--tex : ne compile pas le .tex en sortie.
+
+--dvi : compile le .tex avec latex pour produire un .dvi.
+
 --funky : améliore l'heuristique de génération de noms de variables pour un axe de divergence ou le problème dual. Ils sont fait pour être joli une fois compilés en LaTeX. Profitez en bien ! Toutefois, cette heuristique est plus lente et finit plus rapidement par ne plus avoir de possibilité : à éviter sur les gros problèmes.
 
 -v / --verbose : Affiche des informations supplémentaires lors de la résolution.
 
+NB : --tex et --dvi sont incompatibles.
+NB : on profite mieux de --funky dans la version compilée.
 
 Fonctionnalités
 
@@ -31,7 +37,7 @@ Rapidex, plus qu'un solveur de problèmes linéaires, c'est une vraie solution a
 
 Rapidex est fait pour vous ! Grâce à un savant mélange d'algèbre linéaire et d'easter eggs inutiles, Rapidex est sûr de vous procurer la réponse dont vous aviez besoin.
 
-Rapidex sait résoudre tout type de systèmes, à variables non nécessairement positives. Mais ce n'est pas tout ! Rapidex peut aussi prendre des coefficients fractionnaires.
+Rapidex sait résoudre tout type de systèmes, à variables non nécessairement positives. Mais ce n'est pas tout ! Rapidex peut aussi prendre des coefficients fractionnaires. D'autre part, chaque coté des inégalités est une combinaison linéaire quelconque : il peut y avoir des des variables présentes plusieurs fois (-5x+2y-1+2x+4 est valide et sera correctement interprété), l'expression peut commencer avec '+' ou non si la première variable est positive.
 
 D'autre part, quand il y a une solution, il sera trop heureux de vous la donner. De même, s'il le domaine est vide. Rapidex pourra aussi prétendre que le domaine n'est pas borné. Vous faudra-t-il le croire sur parole ? Non ! Il fournira une droite faisait diverger la fonction objectif et qui est dans le domaine (cette droite est en fait une arête infinie).
 
