@@ -1,7 +1,7 @@
 MAXIMIZE
 2 y_1 + x_2 
 
-SUBJECT_TO
+SUBJECT TO
 -2 y_1 +x_2 <= -2
 y_1-2x_2<= -2
 -y_1 - x_2 >= -7

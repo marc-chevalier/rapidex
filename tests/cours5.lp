@@ -1,7 +1,7 @@
 MAXIMIZE
 x_1+x_2
 
-SUBJECT_TO
+SUBJECT TO
 x_1-x_2 <= 1
 x_2-3/2x_1 <= 2
 

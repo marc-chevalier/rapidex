@@ -1,7 +1,7 @@
 MAXIMIZE
 2 x_1 + x_2 
 
-SUBJECT_TO
+SUBJECT TO
 x_1+x_2<=6
 2x_1-x_2<=6
 -x_1+2x_2<=6
