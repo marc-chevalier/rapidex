@@ -10,7 +10,7 @@ public:
         UNBOUNDED,
         SOLUTION,
     };
-    Simplex(LinearProgram program, const std::string& filename, bool verbose=false, const std::string& compiler="pdflatex");
+    Simplex(LinearProgram program, const std::string& filename, bool verbose = false, const std::string& compiler = "pdflatex", bool verbose = false);
     ~Simplex();
     SolutionType solve(const std::string& variableName);
     mpq_class getOpt() const;
@@ -27,4 +27,5 @@ private:
     Dictionary dictionary;
     LatexPrinter latex;
     bool verboseLatex;
+    bool verbose;
 };

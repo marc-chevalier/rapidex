@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
         compiler = "latex";
 
 
-    Simplex simplex(lp, arguments.getParameter("output", arguments.getArgument(0)+".tex"), arguments.getOption("-latex")||arguments.getOption("l"), compiler);
+    Simplex simplex(lp, arguments.getParameter("output", arguments.getArgument(0)+".tex"), arguments.getOption("-latex")||arguments.getOption("l"), compiler, arguments.getArgument("v"));
 
     AbstractVariableNameDispenser* nameDispenser;
     if(arguments.getOption("-funky"))
