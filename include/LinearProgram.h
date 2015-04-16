@@ -20,7 +20,7 @@ public:
         GE,
         EQ,
     };
-
+	
     LinearProgram();
     ~LinearProgram();
 
@@ -79,4 +79,6 @@ private:
     std::map<std::string, bool> positiveness;
     std::map<std::string, int> variablesCorrespondence;
     std::vector<std::string> reverseVariablesCorrespondence;
+	std::map<std::string, std::map<std::string, mpq_class>> substs;
+	std::set<std::string> pseudoVariables;
 };
