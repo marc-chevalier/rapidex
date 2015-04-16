@@ -124,40 +124,47 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
     return Dictionary(dictionary, objective);
 }
 
-map<string, mpq_class> LinearProgram::getSolution(const map<int, mpq_class>& solution) const
+mpq_class LinearProgram::applySubst(const map<int, mpq_class>& solution, const map<string, mpq_class>& subst) const
+{
+	mpq_class output = 0;
+	if(subst.count("") != 0)
+		output = subst.at("");
+		
+	for(pair<string, mpq_class> s : subst)
+		if(s.first != "")
+			output += s.second * solution[variablesCorrespondence[s.first]];
+		
+	return output;
+}
+
+map<string, mpq_class> LinearProgram::getSolution(map<int, mpq_class> solution) const
 {
     map<string, mpq_class> output;
-
-    for(pair<int, mpq_class> coordonnee : solution)
-        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < variablesCorrespondence.size())
-        {
-            string variableName = reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)];
-            if(variableName[0] == '+')
-            {
-                variableName = variableName.substr(1);
-                output[variableName] = coordonnee.second - solution.at(variablesCorrespondence.at('-'+variableName));
-            }
-            else if(variableName[0] == '-')
-                continue;
-            else
-                output[variableName] = coordonnee.second;
-        }
+	
+	for(pair<string, map<string, mpq_class>> subst : substs)
+		output[subst.first] = applySubst(solution, subst.second);
+		
+	for(string pseudoVariable : pseudoVariables)
+		solution.erase(variablesCorrespondence[pseudoVariable]);
+		
+	for(pair<int, mpq_class> coordonnee : solution)
+		output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
     return output;
 }
 
-map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(const map<int, pair<mpq_class, mpq_class>>& solution) const
+map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(const map<int, pair<mpq_class, mpq_class>>& axis) const
 {
     map<string, pair<mpq_class, mpq_class>> output;
 
-    for(pair<int, pair<mpq_class, mpq_class>> coordonnee : solution)
+    for(pair<int, pair<mpq_class, mpq_class>> coordonnee : axis)
         if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < variablesCorrespondence.size())
         {
             string variableName = reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)];
             if(variableName[0] == '+')
             {
                 variableName = variableName.substr(1);
-                output[variableName] = make_pair(coordonnee.second.first - solution.at(variablesCorrespondence.at('-'+variableName)).first, coordonnee.second.second - solution.at(variablesCorrespondence.at('-'+variableName)).second);
+                output[variableName] = make_pair(coordonnee.second.first - axis.at(variablesCorrespondence.at('-'+variableName)).first, coordonnee.second.second - axis.at(variablesCorrespondence.at('-'+variableName)).second);
             }
             else if(variableName[0] == '-')
                 continue;
