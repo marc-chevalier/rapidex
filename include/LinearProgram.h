@@ -20,7 +20,7 @@ public:
         GE,
         EQ,
     };
-	
+
     LinearProgram();
     ~LinearProgram();
 
@@ -29,8 +29,8 @@ public:
     Dictionary firstPhaseDictionary();
     Dictionary secondPhaseDictionary(const Dictionary& dictionary);
 
-    std::map<std::string, mpq_class> getSolution(const std::map<int, mpq_class>& solution) const;
-    std::map<std::string, std::pair<mpq_class, mpq_class>> getDivergenceAxis(const std::map<int, std::pair<mpq_class, mpq_class>>& solution) const;
+    std::map<std::string, mpq_class> getSolution(std::map<int, mpq_class> solution) const;
+    std::map<std::string, std::pair<mpq_class, mpq_class>> getDivergenceAxis(std::map<int, std::pair<mpq_class, mpq_class>> axis) const;
     mpq_class getOpt(mpq_class opt) const;
 
     void addBound(const std::string& variable, Relation relation, mpq_class q);
@@ -45,7 +45,7 @@ public:
     std::vector<std::tuple<std::map<std::string, mpq_class>, Relation, std::map<std::string, mpq_class>>>  getConstraints() const {return constraints;};
     std::vector<std::tuple<std::string, Relation, mpq_class>> getBounds() const {return bounds;};
 
-    std::set<std::string> getVariables() const {return variables;};
+    std::set<std::string> getVariables() const {return allVariables;};
 
 private:
     void print(Objective obj) const;
@@ -70,12 +70,18 @@ private:
     void toAlmostCanonical();
     void toCanonical();
 
+    mpq_class applySubst(const std::map<int, mpq_class>& solution, const std::map<std::string, mpq_class>& subst) const;
+    std::pair<mpq_class, mpq_class> applySubst(const std::map<int, std::pair<mpq_class, mpq_class>>& axis, const std::map<std::string, mpq_class>& subst) const;
+
     Objective objectiveType;
     Objective objectiveTypeInit;
     std::map<std::string, mpq_class> objectiveFunction;
     std::vector<std::tuple<std::map<std::string, mpq_class>, Relation, std::map<std::string, mpq_class>>> constraints;
     std::vector<std::tuple<std::string, Relation, mpq_class>> bounds;
+
     std::set<std::string> variables;
+    std::set<std::string> allVariables;
+
     std::map<std::string, bool> positiveness;
     std::map<std::string, int> variablesCorrespondence;
     std::vector<std::string> reverseVariablesCorrespondence;

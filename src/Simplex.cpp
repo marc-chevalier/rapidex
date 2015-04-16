@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Simplex::Simplex(LinearProgram program_, const string& filename, bool verboseLatex_, const string& compiler, bool verbose) :
+Simplex::Simplex(LinearProgram program_, const string& filename, bool verboseLatex_, const string& compiler, bool verbose_) :
     program(program_), dictionary(Dictionary()), latex(filename, compiler), verboseLatex(verboseLatex_), verbose(verbose_)
 {
 #ifdef LATEX

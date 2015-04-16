@@ -11,9 +11,12 @@ LinearProgram::LinearProgram() :
     constraints(vector<tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>>()),
     bounds(vector<tuple<string, Relation, mpq_class>>()),
     variables(set<string>()),
+    allVariables(set<string>()),
     positiveness(map<string, bool>()),
     variablesCorrespondence(map<string, int>()),
-    reverseVariablesCorrespondence(vector<string>())
+    reverseVariablesCorrespondence(vector<string>()),
+	substs (map<string, map<string, mpq_class>>()),
+	pseudoVariables (set<string>())
 {}
 
 LinearProgram::~LinearProgram()
@@ -129,48 +132,61 @@ mpq_class LinearProgram::applySubst(const map<int, mpq_class>& solution, const m
 	mpq_class output = 0;
 	if(subst.count("") != 0)
 		output = subst.at("");
-		
+
 	for(pair<string, mpq_class> s : subst)
 		if(s.first != "")
-			output += s.second * solution[variablesCorrespondence[s.first]];
-		
+			output += s.second * solution.at(variablesCorrespondence.at(s.first));
+
 	return output;
 }
 
 map<string, mpq_class> LinearProgram::getSolution(map<int, mpq_class> solution) const
 {
     map<string, mpq_class> output;
-	
+
 	for(pair<string, map<string, mpq_class>> subst : substs)
 		output[subst.first] = applySubst(solution, subst.second);
-		
+
 	for(string pseudoVariable : pseudoVariables)
-		solution.erase(variablesCorrespondence[pseudoVariable]);
-		
+		solution.erase(variablesCorrespondence.at(pseudoVariable));
+
+
 	for(pair<int, mpq_class> coordonnee : solution)
-		output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
+        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < reverseVariablesCorrespondence.size())
+            output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
     return output;
 }
 
-map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(const map<int, pair<mpq_class, mpq_class>>& axis) const
+pair<mpq_class, mpq_class> LinearProgram::applySubst(const map<int, pair<mpq_class, mpq_class>>& axis, const map<string, mpq_class>& subst) const
+{
+	pair<mpq_class, mpq_class> output = make_pair(0, 0);
+	if(subst.count("") != 0)
+		output.first = subst.at("");
+
+	for(pair<string, mpq_class> s : subst)
+		if(s.first != "")
+		{
+			output.first += s.second * axis.at(variablesCorrespondence.at(s.first)).first;
+			output.second += s.second * axis.at(variablesCorrespondence.at(s.first)).second;
+		}
+
+	return output;
+}
+
+map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(map<int, pair<mpq_class, mpq_class>> axis) const
 {
     map<string, pair<mpq_class, mpq_class>> output;
 
-    for(pair<int, pair<mpq_class, mpq_class>> coordonnee : axis)
-        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < variablesCorrespondence.size())
-        {
-            string variableName = reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)];
-            if(variableName[0] == '+')
-            {
-                variableName = variableName.substr(1);
-                output[variableName] = make_pair(coordonnee.second.first - axis.at(variablesCorrespondence.at('-'+variableName)).first, coordonnee.second.second - axis.at(variablesCorrespondence.at('-'+variableName)).second);
-            }
-            else if(variableName[0] == '-')
-                continue;
-            else
-                output[variableName] = make_pair(coordonnee.second.first, coordonnee.second.second);
-        }
+	for(pair<string, map<string, mpq_class>> subst : substs)
+		output[subst.first] = applySubst(axis, subst.second);
+
+	for(string pseudoVariable : pseudoVariables)
+		axis.erase(variablesCorrespondence.at(pseudoVariable));
+
+	for(pair<int, pair<mpq_class, mpq_class>> coordonnee : axis)
+        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < reverseVariablesCorrespondence.size())
+            output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
     return output;
 }
@@ -258,8 +274,12 @@ void LinearProgram::toPositiveVariables()
         deletedVariables.insert(variable);
         newVariables.insert('+'+variable);
         newVariables.insert('-'+variable);
+
         bounds.push_back(tuple<string, Relation, mpq_class>("+"+variable, GE, 0));
         bounds.push_back(tuple<string, Relation, mpq_class>("-"+variable, GE, 0));
+        positiveness['+'+variable] = true;
+        positiveness['-'+variable] = true;
+
         map<string, mpq_class> subst;
         subst['+'+variable] = 1;
         subst['-'+variable] = -1;
@@ -271,10 +291,14 @@ void LinearProgram::toPositiveVariables()
             get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
         }
         objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+        substs[variable] = subst;
     }
 
     for(string variable : newVariables)
+    {
         variables.insert(variable);
+        pseudoVariables.insert(variable);
+    }
 
     for(string variable : deletedVariables)
         variables.erase(variable);
@@ -340,13 +364,19 @@ void LinearProgram::addBound(mpq_class q, Relation relation, const string& varia
 void LinearProgram::addVariable(const string& str)
 {
     if(str != "")
+    {
         variables.insert(str);
+        allVariables.insert(str);
+    }
 }
 
 void LinearProgram::addVariable(const pair<string, mpq_class>& terme)
 {
     if(terme.first != "")
+    {
         variables.insert(terme.first);
+        allVariables.insert(terme.first);
+    }
 }
 
 void LinearProgram::addVariable(const map<string, mpq_class>& expr)
