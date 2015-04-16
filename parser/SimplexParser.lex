@@ -50,6 +50,7 @@ id          [a-zA-Z_][a-zA-Z0-9_]*
 "/"             { if(verbose){cout<<"FRAC ";} return(token::FRAC); }
 "MAXIMIZE"      { if(verbose){cout<<"MAXIMIZE ";} return(token::MAXIMIZE); }
 "MINIMIZE"      { if(verbose){cout<<"MINIMIZE ";} return(token::MINIMIZE); }
+"SUBJECT TO"    { if(verbose){cout<<"SUBJECT_TO ";} return(token::SUBJECT_TO); }
 "SUBJECT_TO"    { if(verbose){cout<<"SUBJECT_TO ";} return(token::SUBJECT_TO); }
 "BOUNDS"        { if(verbose){cout<<"BOUNDS ";} return(token::BOUNDS); }
 "VARIABLES"     { if(verbose){cout<<"VARIABLES ";} return(token::VARIABLES); }
