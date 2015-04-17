@@ -9,10 +9,10 @@ LinearProgram::LinearProgram() :
     objectiveTypeInit(MINIMIZE),
     objectiveFunction(map<string, mpq_class>()),
     constraints(vector<tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>>()),
-    bounds(vector<tuple<string, Relation, mpq_class>>()),
     variables(set<string>()),
     allVariables(set<string>()),
-    positiveness(map<string, bool>()),
+    sup(map<string, mpq_class>()),
+    inf(map<string, mpq_class>()),
     variablesCorrespondence(map<string, int>()),
     reverseVariablesCorrespondence(vector<string>()),
 	substs (map<string, map<string, mpq_class>>()),
@@ -61,7 +61,8 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
             if(get<0>(constraints[i]).count(variable) != 0)
                 w[dualVariables[i]] = get<0>(constraints[i]).at(variable);
 
-        if(positiveness[variable])
+
+        if(isPositive(variable))
             dual.addConstraint(w, GE, w_);
         else
             dual.addConstraint(w, EQ, w_);
@@ -71,6 +72,13 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
     }
 
     return dual;
+}
+
+bool LinearProgram::isPositive(const string& variable) const
+{
+    if(inf.count(variable) != 0)
+        return inf.at(variable) >= 0;
+    return false;
 }
 
 Dictionary LinearProgram::firstPhaseDictionary()
@@ -111,7 +119,10 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
     map<int, map<int, mpq_class>> dictionary;
 
     for(pair<string, mpq_class> terme : objectiveFunction)
-        objective[variablesCorrespondence[terme.first]] = terme.second;
+        if(terme.first != "")
+            objective[variablesCorrespondence[terme.first]] = terme.second;
+        else
+            objective[-1] = terme.second;
 
     for(pair<int, map<int, mpq_class>> constraint : finalDictionary.getDictionary())
         objective = LinearAlgebra::substitution(objective, constraint.second, constraint.first);
@@ -121,7 +132,7 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
             if(terme.first != 0)
                 dictionary[constraint.first][terme.first] = terme.second;
 
-    objective[0] = 0;
+    objective.erase(0);
     LinearAlgebra::simplify(objective);
 
     return Dictionary(dictionary, objective);
@@ -269,35 +280,74 @@ void LinearProgram::toPositiveVariables()
     set<string> deletedVariables;
     for(string variable : variables)
     {
-        if(positiveness[variable] || variable=="")
-            continue;
-        deletedVariables.insert(variable);
-        newVariables.insert('+'+variable);
-        newVariables.insert('-'+variable);
-
-        bounds.push_back(tuple<string, Relation, mpq_class>("+"+variable, GE, 0));
-        bounds.push_back(tuple<string, Relation, mpq_class>("-"+variable, GE, 0));
-        positiveness['+'+variable] = true;
-        positiveness['-'+variable] = true;
-
-        map<string, mpq_class> subst;
-        subst['+'+variable] = 1;
-        subst['-'+variable] = -1;
-
-        size_t size = constraints.size();
-        for(size_t i=0;i<size;++i)
+        if(inf.count(variable) != 0)
         {
-            get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
-            get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+            deletedVariables.insert(variable);
+            newVariables.insert('^'+variable);
+            inf['^'+variable] = 0;
+
+            map<string, mpq_class> subst;
+            subst['^'+variable] = 1;
+            subst[""] = inf.at(variable);
+
+            size_t size = constraints.size();
+            for(size_t i=0;i<size;++i)
+            {
+                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+            }
+            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            substs[variable] = subst;
+            if(sup.count(variable) != 0)
+                sup.at(variable) -= inf.at(variable);
         }
-        objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
-        substs[variable] = subst;
+        else if(sup.count(variable) != 0)
+        {
+            deletedVariables.insert(variable);
+            newVariables.insert('_'+variable);
+            inf['_'+variable] = 0;
+
+            map<string, mpq_class> subst;
+            subst['_'+variable] = -1;
+            subst[""] = sup.at(variable);
+
+            size_t size = constraints.size();
+            for(size_t i=0;i<size;++i)
+            {
+                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+            }
+            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            substs[variable] = subst;
+        }
+        else
+        {
+            deletedVariables.insert(variable);
+            newVariables.insert('^'+variable);
+            newVariables.insert('_'+variable);
+            inf['^'+variable] = 0;
+            inf['_'+variable] = 0;
+
+            map<string, mpq_class> subst;
+            subst['^'+variable] = 1;
+            subst['_'+variable] = -1;
+
+            size_t size = constraints.size();
+            for(size_t i=0;i<size;++i)
+            {
+                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+            }
+            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            substs[variable] = subst;
+        }
     }
 
     for(string variable : newVariables)
     {
         variables.insert(variable);
         pseudoVariables.insert(variable);
+        allVariables.insert(variable);
     }
 
     for(string variable : deletedVariables)
@@ -306,30 +356,23 @@ void LinearProgram::toPositiveVariables()
 
 void LinearProgram::boundsToConstraints()
 {
-    for(size_t i=0; i<bounds.size(); ++i)
+    for(pair<string, mpq_class> up : sup)
     {
-        if(!(get<1>(bounds[i]) == GE && get<2>(bounds[2]) == 0))
-        {
-            map<string, mpq_class> w;
-            map<string, mpq_class> w_;
-            w[get<0>(bounds[i])] = 1;
-            w_[""] = get<2>(bounds[2]);
-            constraints.push_back(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>(w, get<1>(bounds[i]), w_));
-        }
+        map<string, mpq_class> w;
+        map<string, mpq_class> w_;
+        w[up.first] = 1;
+        w_[""] = up.second;
+        constraints.push_back(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>(w, LE, w_));
     }
-    bounds.clear();
-    for(pair<string, bool> prop : positiveness)
-        if(prop.second)
-            bounds.push_back(tuple<string, Relation, mpq_class>(prop.first, GE, 0));
 }
 
 void LinearProgram::toAlmostCanonical()
 {
+    toPositiveVariables();
     toMaximization();
     boundsToConstraints();
     toGE();
     toLeft();
-    toPositiveVariables();
 }
 
 void LinearProgram::toCanonical()
@@ -340,12 +383,48 @@ void LinearProgram::toCanonical()
     toLeftCteRight();
 }
 
+vector<tuple<string, LinearProgram::Relation, mpq_class>>  LinearProgram::getBounds() const
+{
+    vector<tuple<string, LinearProgram::Relation, mpq_class>> output;
+
+    for(pair<string, mpq_class> up : sup)
+        output.push_back(tuple<string, Relation, mpq_class>(up.first, LE, up.second));
+
+    for(pair<string, mpq_class> down : inf)
+        output.push_back(tuple<string, Relation, mpq_class>(down.first, GE, down.second));
+
+    return output;
+}
+
 void LinearProgram::addBound(const string& variable, Relation relation, mpq_class q)
 {
     addVariable(variable);
-    if((relation == EQ || relation == GE) && q>=0)
-        positiveness[variable] = true;
-    bounds.push_back(tuple<string, Relation, mpq_class>(variable, relation, q));
+
+    if(relation == GE)
+    {
+        if(inf.count(variable) == 0)
+            inf[variable] = q;
+        else
+            inf[variable] = max(inf.at(variable), q);
+    }
+    else if(relation == EQ)
+    {
+        if(sup.count(variable) == 0)
+            sup[variable] = q;
+        else
+            sup[variable] = min(sup.at(variable), q);
+        if(inf.count(variable) == 0)
+            inf[variable] = q;
+        else
+            inf[variable] = max(inf.at(variable), q);
+    }
+    else
+    {
+        if(sup.count(variable) == 0)
+            sup[variable] = q;
+        else
+            sup[variable] = min(sup.at(variable), q);
+    }
 }
 
 void LinearProgram::addBound(mpq_class q, Relation relation, const string& variable)
@@ -357,8 +436,8 @@ void LinearProgram::addBound(mpq_class q, Relation relation, const string& varia
         relation_=LE;
     else
         relation_=relation;
-    addVariable(variable);
-    bounds.push_back(tuple<string, Relation, mpq_class>(variable, relation_, q));
+
+    addBound(variable, relation_, q);
 }
 
 void LinearProgram::addVariable(const string& str)
@@ -412,7 +491,11 @@ void LinearProgram::print() const
     print(objectiveFunction);
     cout<<endl<<"Tel que :"<<endl;
     print(constraints);
-    print(bounds);
+    for(pair<string, mpq_class> down : inf)
+        cout << down.first << " >= " << down.second << endl;
+    cout<<endl;
+    for(pair<string, mpq_class> up : sup)
+        cout << up.first << " <= " << up.second << endl;
     cout<<endl;
 }
 

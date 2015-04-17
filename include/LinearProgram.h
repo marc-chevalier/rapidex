@@ -43,9 +43,8 @@ public:
     Objective getObjectiveType() const {return objectiveType;};
     std::map<std::string, mpq_class> getObjectiveFunction() const {return objectiveFunction;};
     std::vector<std::tuple<std::map<std::string, mpq_class>, Relation, std::map<std::string, mpq_class>>>  getConstraints() const {return constraints;};
-    std::vector<std::tuple<std::string, Relation, mpq_class>> getBounds() const {return bounds;};
-
     std::set<std::string> getVariables() const {return allVariables;};
+    std::vector<std::tuple<std::string, Relation, mpq_class>> getBounds() const;
 
 private:
     void print(Objective obj) const;
@@ -63,6 +62,7 @@ private:
     void toLEOrEQ();
     void toPositiveVariables();
 
+    bool isPositive(const std::string& variable) const;
     void addVariable(const std::string& str);
     void addVariable(const std::pair<std::string, mpq_class>& terme);
     void addVariable(const std::map<std::string, mpq_class>& expr);
@@ -77,12 +77,13 @@ private:
     Objective objectiveTypeInit;
     std::map<std::string, mpq_class> objectiveFunction;
     std::vector<std::tuple<std::map<std::string, mpq_class>, Relation, std::map<std::string, mpq_class>>> constraints;
-    std::vector<std::tuple<std::string, Relation, mpq_class>> bounds;
 
     std::set<std::string> variables;
     std::set<std::string> allVariables;
 
-    std::map<std::string, bool> positiveness;
+    std::map<std::string, mpq_class> sup;
+    std::map<std::string, mpq_class> inf;
+
     std::map<std::string, int> variablesCorrespondence;
     std::vector<std::string> reverseVariablesCorrespondence;
 	std::map<std::string, std::map<std::string, mpq_class>> substs;

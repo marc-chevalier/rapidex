@@ -50,9 +50,8 @@ int main(int argc, char* argv[])
         cout<<"Faites `./rapidex --help' ou `./rapidex -h' pour plus d'informations."<<endl;
         return EXIT_FAILURE;
     }
-
     string message = "=======Résolution du problème primal=======";
-    LinearProgram lp = parseLPFile(argv[1]);
+    LinearProgram lp = parseLPFile(arguments.getArgument(0));
     if(arguments.getOption("v"))
     {
         cout<<endl<<endl<<"==============Problème primal=============="<<endl<<endl;
