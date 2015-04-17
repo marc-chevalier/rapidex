@@ -27,9 +27,10 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
     toCanonical();
 
     LinearProgram dual;
-    vector<string> dualVariables = varialbeNameDispenser->genNewVariables(constraints.size(), variables);
+    size_t size = constraints.size();
+    vector<string> dualVariables = varialbeNameDispenser->genNewVariables(size, variables);
 
-    for(size_t i=0;i<constraints.size(); ++i)
+    for(size_t i=0; i<size; ++i)
         if(get<1>(constraints[i]) == GE)
             dual.addBound(dualVariables[i], GE, 0);
 
@@ -37,13 +38,13 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
 
     unordered_map<string, mpq_class> dualObjectiveFunction;
 
-    for(size_t i=0;i<constraints.size(); ++i)
+    for(size_t i=0; i<size; ++i)
         if(get<2>(constraints[i]).count("") != 0)
             dualObjectiveFunction[dualVariables[i]] = get<2>(constraints[i])[""];
 
     dual.setObjectiveFunction(dualObjectiveFunction);
 
-    for(size_t i=0;i<constraints.size(); ++i)
+    for(size_t i=0; i<size; ++i)
         if(get<1>(constraints[i]) == LE)
             dual.addBound(dualVariables[i], GE, 0);
 
@@ -57,7 +58,7 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
         if(objectiveFunction.count(variable) != 0)
             w_[""] = objectiveFunction.at(variable);
 
-        for(size_t i=0;i<constraints.size(); ++i)
+        for(size_t i=0; i<size; ++i)
             if(get<0>(constraints[i]).count(variable) != 0)
                 w[dualVariables[i]] = get<0>(constraints[i]).at(variable);
 
@@ -162,8 +163,9 @@ unordered_map<string, mpq_class> LinearProgram::getSolution(unordered_map<int, m
 		solution.erase(variablesCorrespondence.at(pseudoVariable));
 
 
+    size_t size = reverseVariablesCorrespondence.size();
 	for(pair<int, mpq_class> coordonnee : solution)
-        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < reverseVariablesCorrespondence.size())
+        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < size)
             output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
     return output;
@@ -195,8 +197,9 @@ unordered_map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAx
 	for(string pseudoVariable : pseudoVariables)
 		axis.erase(variablesCorrespondence.at(pseudoVariable));
 
+    size_t size = reverseVariablesCorrespondence.size();
 	for(pair<int, pair<mpq_class, mpq_class>> coordonnee : axis)
-        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < reverseVariablesCorrespondence.size())
+        if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < size)
             output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
     return output;
@@ -218,7 +221,8 @@ void LinearProgram::toMaximization()
 
 void LinearProgram::toLeft()
 {
-    for(size_t i=0;i<constraints.size();++i)
+    size_t size = constraints.size();
+    for(size_t i=0; i<size; ++i)
     {
         get<0>(constraints[i]) = LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
         get<2>(constraints[i]).clear();
@@ -227,7 +231,8 @@ void LinearProgram::toLeft()
 
 void LinearProgram::toLeftCteRight()
 {
-    for(size_t i=0;i<constraints.size();++i)
+    size_t size = constraints.size();
+    for(size_t i=0; i<size; ++i)
     {
         get<0>(constraints[i]) = LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
         get<2>(constraints[i]).clear();
@@ -242,7 +247,6 @@ void LinearProgram::toLeftCteRight()
 void LinearProgram::toGE()
 {
     size_t size = constraints.size();
-
     for(size_t i=0;i<size;++i)
     {
         if(get<1>(constraints[i]) == LE)
@@ -262,7 +266,6 @@ void LinearProgram::toGE()
 void LinearProgram::toLEOrEQ()
 {
     size_t size = constraints.size();
-
     for(size_t i=0;i<size;++i)
     {
         if(get<1>(constraints[i]) == GE)
