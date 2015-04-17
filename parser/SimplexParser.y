@@ -29,7 +29,7 @@ using namespace std;
     mpq_class* rat;
     LinearProgram* LP;
     std::pair<mpq_class, std::string>* t_terme;
-    std::map<std::string, mpq_class>* t_list_terme;
+    std::unordered_map<std::string, mpq_class>* t_list_terme;
     LinearProgram::Relation t_rel;
 }
 
@@ -72,18 +72,18 @@ ObjectiveType:
 ;
 
 LinearCombination:
- InitTerme ListTerm { std::map<std::string, mpq_class>* p = $2;
+ InitTerme ListTerm { std::unordered_map<std::string, mpq_class>* p = $2;
                       (*p)[$1->second] += $1->first;
                       $$ = p;
                     }
 ;
 
 ListTerm:
- ListTerm Terme { std::map<std::string, mpq_class>* p = $1;
+ ListTerm Terme { std::unordered_map<std::string, mpq_class>* p = $1;
                   (*p)[$2->second] += $2->first;
                   $$ = p;
                 }
-|               { $$ = new std::map<std::string, mpq_class>(); }
+|               { $$ = new std::unordered_map<std::string, mpq_class>(); }
 ;
 
 InitTerme:

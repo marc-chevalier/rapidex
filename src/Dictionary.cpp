@@ -4,14 +4,14 @@
 
 using namespace std;
 
-Dictionary::Dictionary(const map<int, map<int, mpq_class>>& dictionary_, const map<int, mpq_class>& objective_) :
+Dictionary::Dictionary(const unordered_map<int, unordered_map<int, mpq_class>>& dictionary_, const unordered_map<int, mpq_class>& objective_) :
     dictionary(dictionary_),
     objective(objective_)
 {}
 
 Dictionary::Dictionary() :
-    dictionary(map<int, map<int, mpq_class>>()),
-    objective(map<int, mpq_class>())
+    dictionary(unordered_map<int, unordered_map<int, mpq_class>>()),
+    objective(unordered_map<int, mpq_class>())
 {}
 
 Dictionary::~Dictionary()
@@ -19,7 +19,7 @@ Dictionary::~Dictionary()
 
 bool Dictionary::isFirstPhaseNeeded() const
 {
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
         if(constraint.second.count(-1) != 0)
             if(constraint.second.at(-1) < 0)
                 return true;
@@ -42,10 +42,10 @@ mpq_class Dictionary::getSolutionValue() const
     return objective.at(-1);
 }
 
-map<int, mpq_class> Dictionary::getSolutionPoint() const
+unordered_map<int, mpq_class> Dictionary::getSolutionPoint() const
 {
-    map<int, mpq_class> output;
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    unordered_map<int, mpq_class> output;
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         if(constraint.second.count(-1) == 0)
             output[constraint.first] = 0;
@@ -59,12 +59,12 @@ map<int, mpq_class> Dictionary::getSolutionPoint() const
     return output;
 }
 
-pair<map<int, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> Dictionary::getDivergenceAxis() const
+pair<unordered_map<int, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> Dictionary::getDivergenceAxis() const
 {
-    map<int, pair<mpq_class, mpq_class>> output;
+    unordered_map<int, pair<mpq_class, mpq_class>> output;
     int divergenceVariable = getDivergenceVariable();
 
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         if(constraint.second.count(-1) == 0)
             output[constraint.first].first = 0;
@@ -100,7 +100,7 @@ int Dictionary::getDivergenceVariable() const
 
 bool Dictionary::isDivergenceVariable(int variable) const
 {
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
         if(constraint.second.count(variable) != 0)
             if(constraint.second.at(variable) < 0)
                 return false;
@@ -124,7 +124,7 @@ int Dictionary::getLeavingInitialisationVariable() const
     mpq_class inf = 0;
     int arginf = -1;
 
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         if(constraint.second.count(-1)==0)
         {
@@ -150,7 +150,7 @@ int Dictionary::getLeavingVariable(int enteringVariable) const
     mpq_class inf = -1;
     int arginf = -1;
 
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         if(constraint.second.count(enteringVariable)==0)
             continue;
@@ -174,22 +174,22 @@ int Dictionary::getLeavingVariable(int enteringVariable) const
     return arginf;
 }
 
-map<int, map<int, mpq_class>> Dictionary::getDictionary() const
+unordered_map<int, unordered_map<int, mpq_class>> Dictionary::getDictionary() const
 {
     return dictionary;
 }
 
-std::map<int, mpq_class> Dictionary::getObjective() const
+std::unordered_map<int, mpq_class> Dictionary::getObjective() const
 {
     return objective;
 }
 
 void Dictionary::pivot(int enteringVariable, int leavingVariable)
 {
-    map<int, map<int, mpq_class>> newDictionary;
-    map<int, mpq_class> isolation = isolateEnteringVariable(dictionary[leavingVariable], enteringVariable, leavingVariable);
+    unordered_map<int, unordered_map<int, mpq_class>> newDictionary;
+    unordered_map<int, mpq_class> isolation = isolateEnteringVariable(dictionary[leavingVariable], enteringVariable, leavingVariable);
 
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
         if(constraint.first != leavingVariable)
             newDictionary[constraint.first] = LinearAlgebra::substitution(constraint.second, isolation, enteringVariable);
 
@@ -200,9 +200,9 @@ void Dictionary::pivot(int enteringVariable, int leavingVariable)
     objective = LinearAlgebra::substitution(objective, isolation, enteringVariable);
 }
 
-map<int, mpq_class> Dictionary::isolateEnteringVariable(const map<int, mpq_class>& expression, int enteringVariable, int leavingVariable) const
+unordered_map<int, mpq_class> Dictionary::isolateEnteringVariable(const unordered_map<int, mpq_class>& expression, int enteringVariable, int leavingVariable) const
 {
-    map<int, mpq_class> output;
+    unordered_map<int, mpq_class> output;
     mpq_class coeffEnteringVariable = expression.at(enteringVariable);
 
     for(pair<int, mpq_class> terme : expression)
@@ -217,7 +217,7 @@ map<int, mpq_class> Dictionary::isolateEnteringVariable(const map<int, mpq_class
 
 void Dictionary::print() const
 {
-    for(pair<int, map<int, mpq_class>> c : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> c : dictionary)
     {
         cout<<"x_"<<c.first<<" = ";
         for(pair<int, mpq_class> terme : c.second)

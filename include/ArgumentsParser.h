@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 #include<vector>
-#include<map>
+#include<unordered_map>
 
 class ArgumentsParser
 {
@@ -24,6 +24,6 @@ public:
 
 private:
     std::vector<std::string> arguments;
-    std::map<std::string, bool> options;
-    std::map<std::string, std::string> parameters;
+    std::unordered_map<std::string, bool> options;
+    std::unordered_map<std::string, std::string> parameters;
 };

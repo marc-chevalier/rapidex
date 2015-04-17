@@ -5,7 +5,7 @@
 using namespace std;
 
 ArgumentsParser::ArgumentsParser(vector<string> nomsOptions, vector<string> nomsParameters) :
-    arguments(vector<string>()), options(map<string, bool>()), parameters(map<string, string>())
+    arguments(vector<string>()), options(unordered_map<string, bool>()), parameters(unordered_map<string, string>())
 {
     for(string option : nomsOptions)
         options[option] = false;

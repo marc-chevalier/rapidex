@@ -54,9 +54,9 @@ void LatexPrinter::appendLinearProgram(const string& linearProgramName, const Li
     if(!isOpen)
         open();
     LinearProgram::Objective objectiveType = lp.getObjectiveType();
-    map<string, mpq_class> objectiveFunction (lp.getObjectiveFunction());
+    unordered_map<string, mpq_class> objectiveFunction (lp.getObjectiveFunction());
 
-    vector<tuple<map<string, mpq_class>, LinearProgram::Relation, map<string, mpq_class>>>  constraints(lp.getConstraints());
+    vector<tuple<unordered_map<string, mpq_class>, LinearProgram::Relation, unordered_map<string, mpq_class>>>  constraints(lp.getConstraints());
     vector<tuple<string, LinearProgram::Relation, mpq_class>> bounds(lp.getBounds());
 
     vector<string> variableToColumnLhs;
@@ -65,7 +65,7 @@ void LatexPrinter::appendLinearProgram(const string& linearProgramName, const Li
     vector<string> variableToColumnRhs;
     set<string> seenRhs;
 
-    for(tuple<map<string, mpq_class>, LinearProgram::Relation, map<string, mpq_class>> constraint : constraints)
+    for(tuple<unordered_map<string, mpq_class>, LinearProgram::Relation, unordered_map<string, mpq_class>> constraint : constraints)
     {
         for(pair<string, mpq_class> terme : get<0>(constraint))
         {
@@ -110,7 +110,7 @@ void LatexPrinter::appendLinearProgram(const string& linearProgramName, const Li
     }
 
     file << "$ tel que \n\n\\[\n"<<linearProgramName<<":\\qquad    \\left\\lbrace\\begin{array}{cr*{" << variableToColumnLhs.size() << "}{cr}ccr*{" << variableToColumnRhs.size() << "}{cr}}\n";
-    for(tuple<map<string, mpq_class>, LinearProgram::Relation, map<string, mpq_class>> constraint : constraints)
+    for(tuple<unordered_map<string, mpq_class>, LinearProgram::Relation, unordered_map<string, mpq_class>> constraint : constraints)
     {
         first = true;
         if(get<0>(constraint).count("") != 0)
@@ -260,15 +260,15 @@ void LatexPrinter::appendDict(const string& dictName, const Dictionary& dict)
 {
     if(!isOpen)
         open();
-    map<int, map<int, mpq_class>> dictionary(dict.getDictionary());
-    map<int, mpq_class> objective(dict.getObjective());
+    unordered_map<int, unordered_map<int, mpq_class>> dictionary(dict.getDictionary());
+    unordered_map<int, mpq_class> objective(dict.getObjective());
     bool cte = false;
     bool x0 = false;
     vector<int> variableToColumn;
     set<int> seen;
 
 
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         for(pair<int, mpq_class> terme : constraint.second)
         {
@@ -285,7 +285,7 @@ void LatexPrinter::appendDict(const string& dictName, const Dictionary& dict)
     }
 
     file << "\\[\n"<<dictName<<":\\qquad    \\begin{array}{rc*{" << (variableToColumn.size()+(cte?1:0)+(x0?1:0)) << "}{cr}}\n";
-    for(pair<int, map<int, mpq_class>> constraint : dictionary)
+    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
     {
         bool first = true;
         file << "        x_{" << constraint.first << "} & = ";

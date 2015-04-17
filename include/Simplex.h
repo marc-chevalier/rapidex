@@ -14,8 +14,8 @@ public:
     ~Simplex();
     SolutionType solve(const std::string& variableName);
     mpq_class getOpt() const;
-    std::map<std::string, mpq_class> getSol() const;
-    std::pair<std::map<std::string, std::pair<mpq_class, mpq_class>>, std::pair<mpq_class, mpq_class>> divergenceAxis() const;
+    std::unordered_map<std::string, mpq_class> getSol() const;
+    std::pair<std::unordered_map<std::string, std::pair<mpq_class, mpq_class>>, std::pair<mpq_class, mpq_class>> divergenceAxis() const;
 
 private:
     std::string mpq_classToLatex(mpq_class rat) const;

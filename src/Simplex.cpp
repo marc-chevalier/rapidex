@@ -19,7 +19,7 @@ mpq_class Simplex::getOpt() const
     return program.getOpt(dictionary.getSolutionValue());
 }
 
-map<string, mpq_class> Simplex::getSol() const
+unordered_map<string, mpq_class> Simplex::getSol() const
 {
     return program.getSolution(dictionary.getSolutionPoint());
 }
@@ -34,9 +34,9 @@ string Simplex::mpq_classToLatex(mpq_class rat) const
     return "\\frac{"+rat.get_num().get_str(10)+"}{"+rat.get_den().get_str(10)+"}";
 }
 
-pair<map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> Simplex::divergenceAxis() const
+pair<unordered_map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> Simplex::divergenceAxis() const
 {
-    pair<map<int, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = dictionary.getDivergenceAxis();
+    pair<unordered_map<int, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = dictionary.getDivergenceAxis();
     return make_pair(program.getDivergenceAxis(axis.first), axis.second);
 }
 
@@ -58,7 +58,7 @@ Simplex::SolutionType Simplex::solve(const string& variableName)
     {
         latex.appendString("La solution optimale est $"+mpq_classToLatex(getOpt())+"$ et est atteinte en \n\\[\n    \\begin{aligned}\n");
 
-        map<string, mpq_class> sol = getSol();
+        unordered_map<string, mpq_class> sol = getSol();
 
         for(pair<string, mpq_class> coord : sol)
             latex.appendString("        "+coord.first+" &= "+mpq_classToLatex(coord.second)+"\\\\\n");
@@ -66,7 +66,7 @@ Simplex::SolutionType Simplex::solve(const string& variableName)
     }
     else if(verboseLatex && solutionType == UNBOUNDED)
     {
-        pair<map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = divergenceAxis();
+        pair<unordered_map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = divergenceAxis();
         latex.appendString("Le domaine n'est pas borné. La droite $"+mpq_classToLatex(axis.second.first)+"+"+mpq_classToLatex(axis.second.second)+" \\times "+variableName+"$ est une solution divergente. Elle est obtenue pour\n\\[    \\begin{aligned}");
 
         for(pair<string, pair<mpq_class, mpq_class>> coord : axis.first)
@@ -180,6 +180,7 @@ Simplex::SolutionType Simplex::secondPhase()
         if(leavingVariable < 0)
             return UNBOUNDED;
         dictionary.pivot(enteringVariable, leavingVariable);
+
 #ifdef DEBUG
         dictionary.print();
         cout<<endl;

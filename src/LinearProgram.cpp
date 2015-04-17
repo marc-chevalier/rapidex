@@ -7,15 +7,15 @@ using namespace std;
 LinearProgram::LinearProgram() :
     objectiveType(MINIMIZE),
     objectiveTypeInit(MINIMIZE),
-    objectiveFunction(map<string, mpq_class>()),
-    constraints(vector<tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>>()),
+    objectiveFunction(unordered_map<string, mpq_class>()),
+    constraints(vector<tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>>()),
     variables(set<string>()),
     allVariables(set<string>()),
-    sup(map<string, mpq_class>()),
-    inf(map<string, mpq_class>()),
-    variablesCorrespondence(map<string, int>()),
+    sup(unordered_map<string, mpq_class>()),
+    inf(unordered_map<string, mpq_class>()),
+    variablesCorrespondence(unordered_map<string, int>()),
     reverseVariablesCorrespondence(vector<string>()),
-	substs (map<string, map<string, mpq_class>>()),
+	substs (unordered_map<string, unordered_map<string, mpq_class>>()),
 	pseudoVariables (set<string>())
 {}
 
@@ -35,7 +35,7 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
 
     dual.setObjectiveType(LinearProgram::MINIMIZE);
 
-    map<string, mpq_class> dualObjectiveFunction;
+    unordered_map<string, mpq_class> dualObjectiveFunction;
 
     for(size_t i=0;i<constraints.size(); ++i)
         if(get<2>(constraints[i]).count("") != 0)
@@ -51,8 +51,8 @@ LinearProgram LinearProgram::getDual(AbstractVariableNameDispenser* varialbeName
     {
         if(variable == "")
             continue;
-        map<string, mpq_class> w;
-        map<string, mpq_class> w_;
+        unordered_map<string, mpq_class> w;
+        unordered_map<string, mpq_class> w_;
 
         if(objectiveFunction.count(variable) != 0)
             w_[""] = objectiveFunction.at(variable);
@@ -83,8 +83,8 @@ bool LinearProgram::isPositive(const string& variable) const
 
 Dictionary LinearProgram::firstPhaseDictionary()
 {
-    map<int, map<int, mpq_class>> dictionary;
-    map<int, mpq_class> objective;
+    unordered_map<int, unordered_map<int, mpq_class>> dictionary;
+    unordered_map<int, mpq_class> objective;
 
     toAlmostCanonical();
     int i = 1;
@@ -97,7 +97,7 @@ Dictionary LinearProgram::firstPhaseDictionary()
         ++i;
     }
 
-    for(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>> constraint : constraints)
+    for(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>> constraint : constraints)
     {
         for(pair<string, mpq_class> terme : get<0>(constraint))
             if(terme.first == "")
@@ -115,8 +115,8 @@ Dictionary LinearProgram::firstPhaseDictionary()
 
 Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionary)
 {
-    map<int, mpq_class> objective;
-    map<int, map<int, mpq_class>> dictionary;
+    unordered_map<int, mpq_class> objective;
+    unordered_map<int, unordered_map<int, mpq_class>> dictionary;
 
     for(pair<string, mpq_class> terme : objectiveFunction)
         if(terme.first != "")
@@ -124,10 +124,10 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
         else
             objective[-1] = terme.second;
 
-    for(pair<int, map<int, mpq_class>> constraint : finalDictionary.getDictionary())
+    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDictionary.getDictionary())
         objective = LinearAlgebra::substitution(objective, constraint.second, constraint.first);
 
-    for(pair<int, map<int, mpq_class>> constraint : finalDictionary.getDictionary())
+    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDictionary.getDictionary())
         for(pair<int, mpq_class> terme : constraint.second)
             if(terme.first != 0)
                 dictionary[constraint.first][terme.first] = terme.second;
@@ -138,7 +138,7 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
     return Dictionary(dictionary, objective);
 }
 
-mpq_class LinearProgram::applySubst(const map<int, mpq_class>& solution, const map<string, mpq_class>& subst) const
+mpq_class LinearProgram::applySubst(const unordered_map<int, mpq_class>& solution, const unordered_map<string, mpq_class>& subst) const
 {
 	mpq_class output = 0;
 	if(subst.count("") != 0)
@@ -151,11 +151,11 @@ mpq_class LinearProgram::applySubst(const map<int, mpq_class>& solution, const m
 	return output;
 }
 
-map<string, mpq_class> LinearProgram::getSolution(map<int, mpq_class> solution) const
+unordered_map<string, mpq_class> LinearProgram::getSolution(unordered_map<int, mpq_class> solution) const
 {
-    map<string, mpq_class> output;
+    unordered_map<string, mpq_class> output;
 
-	for(pair<string, map<string, mpq_class>> subst : substs)
+	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
 		output[subst.first] = applySubst(solution, subst.second);
 
 	for(string pseudoVariable : pseudoVariables)
@@ -169,7 +169,7 @@ map<string, mpq_class> LinearProgram::getSolution(map<int, mpq_class> solution) 
     return output;
 }
 
-pair<mpq_class, mpq_class> LinearProgram::applySubst(const map<int, pair<mpq_class, mpq_class>>& axis, const map<string, mpq_class>& subst) const
+pair<mpq_class, mpq_class> LinearProgram::applySubst(const unordered_map<int, pair<mpq_class, mpq_class>>& axis, const unordered_map<string, mpq_class>& subst) const
 {
 	pair<mpq_class, mpq_class> output = make_pair(0, 0);
 	if(subst.count("") != 0)
@@ -185,11 +185,11 @@ pair<mpq_class, mpq_class> LinearProgram::applySubst(const map<int, pair<mpq_cla
 	return output;
 }
 
-map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(map<int, pair<mpq_class, mpq_class>> axis) const
+unordered_map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAxis(unordered_map<int, pair<mpq_class, mpq_class>> axis) const
 {
-    map<string, pair<mpq_class, mpq_class>> output;
+    unordered_map<string, pair<mpq_class, mpq_class>> output;
 
-	for(pair<string, map<string, mpq_class>> subst : substs)
+	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
 		output[subst.first] = applySubst(axis, subst.second);
 
 	for(string pseudoVariable : pseudoVariables)
@@ -254,7 +254,7 @@ void LinearProgram::toGE()
         else if(get<1>(constraints[i]) == EQ)
         {
             get<1>(constraints[i]) = GE;
-            constraints.push_back(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>(get<2>(constraints[i]), GE, get<0>(constraints[i])));
+            constraints.push_back(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>(get<2>(constraints[i]), GE, get<0>(constraints[i])));
         }
     }
 }
@@ -286,7 +286,7 @@ void LinearProgram::toPositiveVariables()
             newVariables.insert('^'+variable);
             inf['^'+variable] = 0;
 
-            map<string, mpq_class> subst;
+            unordered_map<string, mpq_class> subst;
             subst['^'+variable] = 1;
             subst[""] = inf.at(variable);
 
@@ -307,7 +307,7 @@ void LinearProgram::toPositiveVariables()
             newVariables.insert('_'+variable);
             inf['_'+variable] = 0;
 
-            map<string, mpq_class> subst;
+            unordered_map<string, mpq_class> subst;
             subst['_'+variable] = -1;
             subst[""] = sup.at(variable);
 
@@ -328,7 +328,7 @@ void LinearProgram::toPositiveVariables()
             inf['^'+variable] = 0;
             inf['_'+variable] = 0;
 
-            map<string, mpq_class> subst;
+            unordered_map<string, mpq_class> subst;
             subst['^'+variable] = 1;
             subst['_'+variable] = -1;
 
@@ -358,11 +358,11 @@ void LinearProgram::boundsToConstraints()
 {
     for(pair<string, mpq_class> up : sup)
     {
-        map<string, mpq_class> w;
-        map<string, mpq_class> w_;
+        unordered_map<string, mpq_class> w;
+        unordered_map<string, mpq_class> w_;
         w[up.first] = 1;
         w_[""] = up.second;
-        constraints.push_back(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>(w, LE, w_));
+        constraints.push_back(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>(w, LE, w_));
     }
 }
 
@@ -458,21 +458,21 @@ void LinearProgram::addVariable(const pair<string, mpq_class>& terme)
     }
 }
 
-void LinearProgram::addVariable(const map<string, mpq_class>& expr)
+void LinearProgram::addVariable(const unordered_map<string, mpq_class>& expr)
 {
     for(pair<string, mpq_class> terme : expr)
         addVariable(terme);
 }
 
-void LinearProgram::addConstraint(const map<string, mpq_class>& lhs, Relation relation, const map<string, mpq_class>& rhs)
+void LinearProgram::addConstraint(const unordered_map<string, mpq_class>& lhs, Relation relation, const unordered_map<string, mpq_class>& rhs)
 {
     addVariable(lhs);
     addVariable(rhs);
 
-    constraints.push_back(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>(lhs, relation, rhs));
+    constraints.push_back(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>(lhs, relation, rhs));
 }
 
-void LinearProgram::setObjectiveFunction(const map<string, mpq_class>& objectiveFunction_)
+void LinearProgram::setObjectiveFunction(const unordered_map<string, mpq_class>& objectiveFunction_)
 {
     addVariable(objectiveFunction_);
 
@@ -507,7 +507,7 @@ void LinearProgram::print(Objective obj) const
         cout<<"Minimiser ";
 }
 
-void LinearProgram::print(const map<string, mpq_class>& dict) const
+void LinearProgram::print(const unordered_map<string, mpq_class>& dict) const
 {
     bool init=true;
 
@@ -568,13 +568,13 @@ void LinearProgram::print(Relation rel) const
     }
 }
 
-void LinearProgram::print(const vector<tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>>& dict) const
+void LinearProgram::print(const vector<tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>>& dict) const
 {
-    for(tuple<map<string, mpq_class>, Relation, map<string, mpq_class>> terme : dict)
+    for(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>> terme : dict)
         print(terme);
 }
 
-void LinearProgram::print(const tuple<map<string, mpq_class>, Relation, map<string, mpq_class>>& terme) const
+void LinearProgram::print(const tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>& terme) const
 {
     cout<<"  ";
     print(get<0>(terme));

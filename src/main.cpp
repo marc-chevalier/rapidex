@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
     if(solutionType == Simplex::SOLUTION)
     {
         cout<<"Solution = "<<simplex.getOpt()<<endl;
-        map<string, mpq_class> solution(simplex.getSol());
+        unordered_map<string, mpq_class> solution(simplex.getSol());
         for(pair<string, mpq_class> coord : solution)
             cout<<"  "<<coord.first<<" = "<<coord.second<<endl;
     }
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
     else
     {
         cout<<"Le domaine n'est pas borné."<<endl;
-        pair<map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = simplex.divergenceAxis();
+        pair<unordered_map<string, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>> axis = simplex.divergenceAxis();
         cout<<"Axe de divergernce = "<<axis.second.first<<"+"<<axis.second.second<<"*"<<variableName<<endl;
 
         for(pair<string, pair<mpq_class, mpq_class>> coord : axis.first)
