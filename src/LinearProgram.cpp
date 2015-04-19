@@ -146,20 +146,22 @@ mpq_class LinearProgram::applySubst(const unordered_map<int, mpq_class>& solutio
 		output = subst.at("");
 
 	for(pair<string, mpq_class> s : subst)
-		if(s.first != "")
-			output += s.second * solution.at(variablesCorrespondence.at(s.first));
+		if(s.first != "" && solution.count(variablesCorrespondence.at(s.first)) != 0)
+            output += s.second * solution.at(variablesCorrespondence.at(s.first));
 
 	return output;
 }
 
 unordered_map<string, mpq_class> LinearProgram::getSolution(unordered_map<int, mpq_class> solution) const
 {
-#ifdef DEBUG
-    for(pair<int, mpq_class> coord : solution)
-        cout<<coord.first<<":"<<coord.second<<endl;
-#endif
-
     unordered_map<string, mpq_class> output;
+
+#ifdef DEBUG
+    if(!solution.empty())
+    cout<<"Solution brute : "<<endl;
+    for(pair<int, mpq_class> coord : solution)
+        cout<<coord.first << "=>"<<coord.second<<endl;
+#endif
 
 	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
 		output[subst.first] = applySubst(solution, subst.second);
@@ -553,6 +555,7 @@ void LinearProgram::print() const
         cout << "  " << down.first << " >= " << down.second << endl;
     for(pair<string, mpq_class> up : sup)
         cout << "  " << up.first << " <= " << up.second << endl;
+    cout<<endl;
 }
 
 void LinearProgram::print(Objective obj) const
@@ -570,8 +573,16 @@ void LinearProgram::print(const unordered_map<string, mpq_class>& dict) const
     if(dict.size()==0)
         cout<<"0";
 
+    if(dict.count("") != 0)
+    {
+        cout<<dict.at("")<<" ";
+        init = false;
+    }
+
     for(pair<string, mpq_class> terme : dict)
     {
+        if(terme.first == "")
+            continue;
         if(init)
         {
             if(terme.second!=1 || terme.first == "")
@@ -580,7 +591,6 @@ void LinearProgram::print(const unordered_map<string, mpq_class>& dict) const
                 cout<<"*";
             if(terme.first!="")
                 cout<<terme.first<<" ";
-
         }
         else
         {
@@ -599,7 +609,7 @@ void LinearProgram::print(const unordered_map<string, mpq_class>& dict) const
             if(terme.first!="")
                 cout<<terme.first<<" ";
         }
-        init=false;
+        init = false;
     }
 }
 

@@ -52,6 +52,9 @@ int main(int argc, char* argv[])
     }
     string message = "=======Résolution du problème primal=======";
     LinearProgram lp = parseLPFile(arguments.getArgument(0));
+#ifdef DEBUG
+    cout<<endl<<endl;
+#endif
     if(arguments.getOption("v"))
     {
         cout<<endl<<endl<<"==============Problème primal=============="<<endl<<endl;

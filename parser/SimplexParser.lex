@@ -18,7 +18,12 @@ extern int line_number;	/* defined in parser.ypp */
 
 using namespace std;
 
-bool verbose=false;
+#ifndef DEBUG
+    bool verbose = false;
+#endif
+#ifdef DEBUG
+    bool verbose = true;
+#endif
 
 %}
 

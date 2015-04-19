@@ -41,7 +41,7 @@ using namespace std;
 %token PLUS MINUS FRAC TIMES
 
 %type<str> VARIABLE
-%type<rat> Signe INT ValAbs Coef
+%type<rat> Signe INT ValAbs Coef CoefOrValAbs
 %type<t_terme> Terme InitTerme
 %type<t_list_terme> ListTerm LinearCombination
 %type<t_rel> Relation
@@ -147,13 +147,18 @@ Bounds_list:
 |Bound EOL
 ;
 
+CoefOrValAbs :
+ Coef   { $$ = $1; }
+|ValAbs { $$ = $1; }
+;
+
 Bound:
- VARIABLE Relation INT { lp.addBound(*$1, $2, *$3); }
-|INT Relation VARIABLE { lp.addBound(*$1, $2, *$3); }
-|INT Relation VARIABLE Relation INT {
-                                      lp.addBound(*$1, $2, *$3);
-                                      lp.addBound(*$3, $4, *$5);
-                                    }
+ VARIABLE Relation CoefOrValAbs                         { lp.addBound(*$1, $2, *$3); }
+|CoefOrValAbs Relation VARIABLE                         { lp.addBound(*$1, $2, *$3); }
+|CoefOrValAbs Relation VARIABLE Relation CoefOrValAbs   {
+                                                            lp.addBound(*$1, $2, *$3);
+                                                            lp.addBound(*$3, $4, *$5);
+                                                        }
 ;
 
 Variables:

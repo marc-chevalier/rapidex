@@ -94,7 +94,7 @@ Simplex::SolutionType Simplex::firstPhase()
         latex.appendString("\\section*{Première phase}");
     }
 #ifdef DEBUG
-    cout<<"==First phase=="<<endl;
+    cout<<"==Première phase=="<<endl;
     dictionary.print();
 #endif
     if(!dictionary.isFirstPhaseNeeded())
@@ -108,8 +108,8 @@ Simplex::SolutionType Simplex::firstPhase()
     }
 
 #ifdef DEBUG
-    cout<<endl<<"Entering variable: "<<0<<endl;
-    cout<<"Leaving variable: "<<dictionary.getLeavingInitialisationVariable()<<endl;
+    cout<<"Variable entrante : "<<0<<endl;
+    cout<<"Variable sortante : "<<dictionary.getLeavingInitialisationVariable()<<endl;
 #endif
 
     if(verboseLatex)
@@ -123,24 +123,22 @@ Simplex::SolutionType Simplex::firstPhase()
     ++i;
 #ifdef DEBUG
     dictionary.print();
-    cout<<endl;
 #endif
     while(!dictionary.isSolved())
     {
         int enteringVariable = dictionary.getEnteringVariable();
 #ifdef DEBUG
-        cout<<"Entering variable: "<<enteringVariable<<endl;
+        cout<<"Variable sortante: "<<enteringVariable<<endl;
 #endif
         int leavingVariable = dictionary.getLeavingVariable(enteringVariable);
 #ifdef DEBUG
-        cout<<"Leaving variable: "<<leavingVariable<<endl;
+        cout<<"Leaving variable: "<<leavingVariable<<endl<<endl;
 #endif
         if(leavingVariable < 0)
             return UNBOUNDED;
         dictionary.pivot(enteringVariable, leavingVariable);
 #ifdef DEBUG
         dictionary.print();
-        cout<<endl;
 #endif
         if(verboseLatex)
         {
@@ -157,9 +155,8 @@ Simplex::SolutionType Simplex::secondPhase()
     int i=0;
     dictionary = program.secondPhaseDictionary(dictionary);
 #ifdef DEBUG
-    cout<<"==Second phase=="<<endl;
+    cout<<endl<<endl<<"==Seconde phase=="<<endl;
     dictionary.print();
-    cout<<endl;
 #endif
 
     if(verboseLatex)
@@ -171,11 +168,11 @@ Simplex::SolutionType Simplex::secondPhase()
     {
         int enteringVariable = dictionary.getEnteringVariable();
 #ifdef DEBUG
-        cout<<"Entering variable: "<<enteringVariable<<endl;
+        cout<<"Variable entrante : "<<enteringVariable<<endl;
 #endif
         int leavingVariable = dictionary.getLeavingVariable(enteringVariable);
 #ifdef DEBUG
-        cout<<"Leaving variable: "<<leavingVariable<<endl;
+        cout<<"Variable sortante : "<<leavingVariable<<endl<<endl;
 #endif
         if(leavingVariable < 0)
             return UNBOUNDED;
@@ -183,7 +180,6 @@ Simplex::SolutionType Simplex::secondPhase()
 
 #ifdef DEBUG
         dictionary.print();
-        cout<<endl;
 #endif
         if(verboseLatex)
         {

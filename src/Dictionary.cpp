@@ -56,10 +56,6 @@ unordered_map<int, mpq_class> Dictionary::getSolutionPoint() const
             if(terme.first!=-1)
                 output[terme.first] = 0;
     }
-#ifdef DEBUG
-    for(pair<int, mpq_class> coord : output)
-        cout<<coord.first<<";"<<coord.second<<endl;
-#endif
     return output;
 }
 
@@ -238,12 +234,14 @@ void Dictionary::print() const
         }
         cout<<endl;
     }
-
+    cout<<"------------"<<endl;
     cout<<"z = ";
+    if(objective.count(-1) != 0)
+        cout<<objective.at(-1)<<"  ";
     for(pair<int, mpq_class> terme : objective)
     {
         if(terme.first==-1)
-            cout<<terme.second<<"  ";
+            continue;
         else if(terme.second>=0)
             cout<<"+"<<terme.second<<"*x_"<<terme.first<<"  ";
         else
