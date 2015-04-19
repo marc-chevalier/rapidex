@@ -154,6 +154,11 @@ mpq_class LinearProgram::applySubst(const unordered_map<int, mpq_class>& solutio
 
 unordered_map<string, mpq_class> LinearProgram::getSolution(unordered_map<int, mpq_class> solution) const
 {
+#ifdef DEBUG
+    for(pair<int, mpq_class> coord : solution)
+        cout<<coord.first<<":"<<coord.second<<endl;
+#endif
+
     unordered_map<string, mpq_class> output;
 
 	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
@@ -301,8 +306,13 @@ void LinearProgram::toPositiveVariables()
             }
             objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
             substs[variable] = subst;
+
             if(sup.count(variable) != 0)
-                sup.at(variable) -= inf.at(variable);
+            {
+                sup['^'+variable] = sup.at(variable) - inf.at(variable);
+                sup.erase(variable);
+            }
+            inf.erase(variable);
         }
         else if(sup.count(variable) != 0)
         {
@@ -322,6 +332,7 @@ void LinearProgram::toPositiveVariables()
             }
             objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
             substs[variable] = subst;
+            sup.erase(variable);
         }
         else
         {
@@ -371,19 +382,63 @@ void LinearProgram::boundsToConstraints()
 
 void LinearProgram::toAlmostCanonical()
 {
+#ifdef DEBUG
+    cout<<"Initialement"<<endl;
+    print();
+#endif
     toPositiveVariables();
+#ifdef DEBUG
+    cout<<"Après toPositiveVariables"<<endl;
+    print();
+#endif
     toMaximization();
+#ifdef DEBUG
+    cout<<"Après toMaximization"<<endl;
+    print();
+#endif
     boundsToConstraints();
+#ifdef DEBUG
+    cout<<"Après boundsToConstraints"<<endl;
+    print();
+#endif
     toGE();
+#ifdef DEBUG
+    cout<<"Après toGE"<<endl;
+    print();
+#endif
     toLeft();
+#ifdef DEBUG
+    cout<<"Après toLeft (final)"<<endl;
+    print();
+#endif
 }
 
 void LinearProgram::toCanonical()
 {
+#ifdef DEBUG
+    cout<<"Initialement"<<endl;
+    print();
+#endif
     toMaximization();
+#ifdef DEBUG
+    cout<<"Après toMaximization"<<endl;
+    print();
+#endif
     boundsToConstraints();
+#ifdef DEBUG
+    cout<<"Après boundsToConstraints"<<endl;
+    print();
+#endif
     toLEOrEQ();
+#ifdef DEBUG
+    cout<<"Après toLEOrEQ"<<endl;
+    print();
+#endif
     toLeftCteRight();
+#ifdef DEBUG
+    cout<<"Après toLeft (final)"<<endl;
+    print();
+#endif
 }
 
 vector<tuple<string, LinearProgram::Relation, mpq_class>>  LinearProgram::getBounds() const
@@ -495,11 +550,9 @@ void LinearProgram::print() const
     cout<<endl<<"Tel que :"<<endl;
     print(constraints);
     for(pair<string, mpq_class> down : inf)
-        cout << down.first << " >= " << down.second << endl;
-    cout<<endl;
+        cout << "  " << down.first << " >= " << down.second << endl;
     for(pair<string, mpq_class> up : sup)
-        cout << up.first << " <= " << up.second << endl;
-    cout<<endl;
+        cout << "  " << up.first << " <= " << up.second << endl;
 }
 
 void LinearProgram::print(Objective obj) const

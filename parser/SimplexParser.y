@@ -118,6 +118,7 @@ ValAbs:
 Constraints:
  SUBJECT_TO EOL Constraints_list
 |SUBJECT_TO Constraints_list
+|SUBJECT_TO EOL
 ;
 
 Constraints_list:
