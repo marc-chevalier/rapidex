@@ -26,6 +26,7 @@ LinearProgram parseLPFile(string fileName)
 
 int main(int argc, char* argv[])
 {
+    setbuf(stdout, NULL);
     ArgumentsParser arguments(ArgumentsParser::getNomsOptions(), ArgumentsParser::getNomsParameters());
     arguments.parse(argc, argv);
     if(arguments.demandeAide())
@@ -72,20 +73,23 @@ int main(int argc, char* argv[])
                 cout<<"  Vous en avez assez ? Très bien."<<endl;
             cout<<"  Buvez, je vous en prie."<<endl;
             cout<<"  Absorbtion du thé : "<<endl;
-            for(int i=0;i<10;++i)
+            for(int i=0;i<25;++i)
             {
-                /*int j;
+                int j;
+                printf("  ");
                 for(j=0;j<i;++j)
-                    printf("*");
-                for(;j<10;++j)
+                    printf("¤");
+                for(;j<25;++j)
                     printf("-");
-                usleep(100000);
-                if(i<9)
-                    for(j=0;j<11;++j)
-                        printf("\b");*/
-                cout<<"  ."<<endl;
-                usleep(200000);
+                usleep(250000);
+                for(j=0;j<28;++j)
+                    printf("\b");
+                /*cout<<"  .";
+                usleep(200000);*/
             }
+                printf("  ");
+            for(int j=0;j<25;++j)
+                printf("¤");
             cout<<endl<<"  Était-il à votre goût ? (-y/-n)"<<endl;
             if(arguments.getOption("y"))
                 cout<<"  J'en suis ravi. Au plaisir de vous revoir."<<endl;
