@@ -46,6 +46,8 @@ public:
     std::set<std::string> getVariables() const {return allVariables;};
     std::vector<std::tuple<std::string, Relation, mpq_class>> getBounds() const;
 
+    void setVerbose(bool verbose_) { verbose = verbose_; };
+
 private:
     void print(Objective obj) const;
     void print(const std::unordered_map<std::string, mpq_class>& dict) const;
@@ -88,4 +90,6 @@ private:
     std::vector<std::string> reverseVariablesCorrespondence;
 	std::unordered_map<std::string, std::unordered_map<std::string, mpq_class>> substs;
 	std::set<std::string> pseudoVariables;
+
+	bool verbose;
 };

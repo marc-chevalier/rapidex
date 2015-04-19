@@ -9,6 +9,9 @@ Simplex::Simplex(LinearProgram program_, const string& filename, bool verboseLat
 #ifdef LATEX
     verboseLatex = true;
 #endif
+#ifdef DEBUG
+    verbose = true;
+#endif
 }
 
 Simplex::~Simplex()
@@ -93,24 +96,25 @@ Simplex::SolutionType Simplex::firstPhase()
         latex.appendLinearProgram("(S_C)", program);
         latex.appendString("\\section*{Première phase}");
     }
-#ifdef DEBUG
-    cout<<"==Première phase=="<<endl;
-    dictionary.print();
-#endif
+    if(verbose)
+    {
+        cout<<"==Première phase=="<<endl;
+        dictionary.print();
+    }
     if(!dictionary.isFirstPhaseNeeded())
     {
         if(verboseLatex)
             latex.appendString("La première phase n'est pas utile : 0 appartient au polytope. ");
-#ifdef DEBUG
+        if(verbose)
         cout<<"Inutile"<<endl;
-#endif
         return SOLUTION;
     }
 
-#ifdef DEBUG
-    cout<<"Variable entrante : "<<0<<endl;
-    cout<<"Variable sortante : "<<dictionary.getLeavingInitialisationVariable()<<endl;
-#endif
+    if(verbose)
+    {
+        cout<<"Variable entrante : "<<0<<endl;
+        cout<<"Variable sortante : "<<dictionary.getLeavingInitialisationVariable()<<endl;
+    }
 
     if(verboseLatex)
         latex.appendDict("(P'_{"+to_string(i)+"})", dictionary);
@@ -121,25 +125,28 @@ Simplex::SolutionType Simplex::firstPhase()
     if(verboseLatex)
         latex.appendDict("(P'_{"+to_string(i)+"})", dictionary);
     ++i;
-#ifdef DEBUG
-    dictionary.print();
-#endif
+    if(verbose)
+        dictionary.print();
+
     while(!dictionary.isSolved())
     {
         int enteringVariable = dictionary.getEnteringVariable();
-#ifdef DEBUG
-        cout<<"Variable sortante: "<<enteringVariable<<endl;
-#endif
+
+        if(verbose)
+            cout<<"Variable sortante: "<<enteringVariable<<endl;
+
         int leavingVariable = dictionary.getLeavingVariable(enteringVariable);
-#ifdef DEBUG
-        cout<<"Leaving variable: "<<leavingVariable<<endl<<endl;
-#endif
+
+        if(verbose)
+            cout<<"Leaving variable: "<<leavingVariable<<endl<<endl;
+
         if(leavingVariable < 0)
             return UNBOUNDED;
         dictionary.pivot(enteringVariable, leavingVariable);
-#ifdef DEBUG
-        dictionary.print();
-#endif
+
+        if(verbose)
+            dictionary.print();
+
         if(verboseLatex)
         {
             latex.appendString("$x_{"+to_string(enteringVariable)+"}$ entre et $x_{"+to_string(leavingVariable)+"}$ sort.");
@@ -154,10 +161,11 @@ Simplex::SolutionType Simplex::secondPhase()
 {
     int i=0;
     dictionary = program.secondPhaseDictionary(dictionary);
-#ifdef DEBUG
-    cout<<endl<<endl<<"==Seconde phase=="<<endl;
-    dictionary.print();
-#endif
+    if(verbose)
+    {
+        cout<<endl<<endl<<"==Seconde phase=="<<endl;
+        dictionary.print();
+    }
 
     if(verboseLatex)
     {
@@ -167,20 +175,21 @@ Simplex::SolutionType Simplex::secondPhase()
     while(!dictionary.isSolved())
     {
         int enteringVariable = dictionary.getEnteringVariable();
-#ifdef DEBUG
-        cout<<"Variable entrante : "<<enteringVariable<<endl;
-#endif
+        if(verbose)
+            cout<<"Variable entrante : "<<enteringVariable<<endl;
+
         int leavingVariable = dictionary.getLeavingVariable(enteringVariable);
-#ifdef DEBUG
-        cout<<"Variable sortante : "<<leavingVariable<<endl<<endl;
-#endif
+
+        if(verbose)
+            cout<<"Variable sortante : "<<leavingVariable<<endl<<endl;
+
         if(leavingVariable < 0)
             return UNBOUNDED;
         dictionary.pivot(enteringVariable, leavingVariable);
 
-#ifdef DEBUG
-        dictionary.print();
-#endif
+        if(verbose)
+            dictionary.print();
+
         if(verboseLatex)
         {
             latex.appendString("$x_{"+to_string(enteringVariable)+"}$ entre et $x_{"+to_string(leavingVariable)+"}$ sort.");

@@ -16,8 +16,13 @@ LinearProgram::LinearProgram() :
     variablesCorrespondence(unordered_map<string, int>()),
     reverseVariablesCorrespondence(vector<string>()),
 	substs (unordered_map<string, unordered_map<string, mpq_class>>()),
-	pseudoVariables (set<string>())
-{}
+	pseudoVariables (set<string>()),
+	verbose(false)
+{
+#ifdef DEBUG
+    verbose = true;
+#endif
+}
 
 LinearProgram::~LinearProgram()
 {}
@@ -384,10 +389,11 @@ void LinearProgram::boundsToConstraints()
 
 void LinearProgram::toAlmostCanonical()
 {
-#ifdef DEBUG
-    cout<<"Initialement"<<endl;
-    print();
-#endif
+    if(verbose)
+    {
+        cout<<"Initialement"<<endl;
+        print();
+    }
     toPositiveVariables();
 #ifdef DEBUG
     cout<<"Après toPositiveVariables"<<endl;
@@ -411,16 +417,21 @@ void LinearProgram::toAlmostCanonical()
     toLeft();
 #ifdef DEBUG
     cout<<"Après toLeft (final)"<<endl;
-    print();
 #endif
+#ifndef DEBUG
+    cout<<"Final"<<endl;
+#endif
+    if(verbose)
+        print();
 }
 
 void LinearProgram::toCanonical()
 {
-#ifdef DEBUG
-    cout<<"Initialement"<<endl;
-    print();
-#endif
+    if(verbose)
+    {
+        cout<<"Initialement"<<endl;
+        print();
+    }
     toMaximization();
 #ifdef DEBUG
     cout<<"Après toMaximization"<<endl;
@@ -438,9 +449,13 @@ void LinearProgram::toCanonical()
 #endif
     toLeftCteRight();
 #ifdef DEBUG
-    cout<<"Après toLeft (final)"<<endl;
-    print();
+    cout<<"Après toLeftCteRight (final)"<<endl;
 #endif
+#ifndef DEBUG
+    cout<<"Final"<<endl;
+#endif
+    if(verbose)
+        print();
 }
 
 vector<tuple<string, LinearProgram::Relation, mpq_class>>  LinearProgram::getBounds() const
