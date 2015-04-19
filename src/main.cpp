@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include "../include/Simplex.h"
 #include "../include/ParseError.h"
 #include "../parser/driver.h"
@@ -32,13 +33,15 @@ int main(int argc, char* argv[])
         cout<<endl<<"Syntaxes :"<<endl;
         cout<<"    ./rapidex file"<<endl<<endl;
         cout<<"-l / --latex             Détail de la résolution en LaTeX, par défaut, un fichier pdf est produit (cf. infra)"<<endl;
-        cout<<"--output=file            Enregistrer le fichier latex dans file"<<endl<<endl;
+        cout<<"--output=file            Enregistrer le fichier latex dans file"<<endl;
+        cout<<"--dvi                    Produit un fichier dvi à la place du pdf en utilisant latex"<<endl;
+        cout<<"--tex                    Ne compile pas le .tex obtenu"<<endl<<endl;
         cout<<"-d / --dual              Afficher le dual"<<endl;
         cout<<"-dr / --dual-resol       Résoudre le dual au lieu du problème initial"<<endl;
         cout<<"--funky                  Amélioration du dual et de la détermination d'un axe divergent"<<endl;
-        cout<<"--dvi                    Produit un fichier dvi à la place du pdf en utilisant latex"<<endl;
-        cout<<"--tex                    Ne compile pas le .tex obtenu"<<endl;
-        cout<<"-v / --verbose           Verbose"<<endl<<endl;
+        cout<<"-v / --verbose           Verbose"<<endl;
+        cout<<"--the                    Essayez avec -v"<<endl;
+        cout<<"-y / -n                  Essayez avec -v"<<endl<<endl;
         cout<<"-h / --help              Vous y êtes"<<endl<<endl;
         return EXIT_SUCCESS;
     }
@@ -57,6 +60,41 @@ int main(int argc, char* argv[])
 #endif
     if(arguments.getOption("v"))
     {
+        cout<<"  Bonjour et bienvenue dans le mode verbeux."<<endl;
+        cout<<"  Comment vous portez vous ?"<<endl;
+        cout<<"  Vous prendrez bien le thé ? (--the)"<<endl;
+        if(arguments.getOption("-the"))
+        {
+            cout<<"  Voici."<<endl;
+            cout<<"  Je n'ai pas de sucre, désolé"<<endl;
+            cout<<"  Buvez, je vous en prie."<<endl;
+            cout<<"  Absorbtion du thé : "<<endl;
+            for(int i=0;i<10;++i)
+            {
+                /*int j;
+                for(j=0;j<i;++j)
+                    printf("*");
+                for(;j<10;++j)
+                    printf("-");
+                usleep(100000);
+                if(i<9)
+                    for(j=0;j<11;++j)
+                        printf("\b");*/
+                cout<<"  ."<<endl;
+                usleep(200000);
+            }
+            cout<<endl<<"  Était-il à votre goût ? (-y/-n)"<<endl;
+            if(arguments.getOption("y"))
+                cout<<"  J'en suis ravi. Au plaisir de vous revoir."<<endl;
+            else if(arguments.getOption("n"))
+                cout<<"  Oh ! Je suis navré. J'espère qu'il sera meilleur la prochaine fois."<<endl;
+            else
+                cout<<"  Quand dinerons nous chez vous ?"<<endl<<"    (pour mémoire : marc.chevalier@ens-lyon.org pour la réponse)"<<endl;
+        }
+        else
+        {
+            cout<<"  Quel dommage. Vous repasserez bien une autre fois."<<endl;
+        }
         cout<<endl<<endl<<"==============Problème primal=============="<<endl<<endl;
         lp.print();
         cout<<            "==========================================="<<endl<<endl<<endl;
