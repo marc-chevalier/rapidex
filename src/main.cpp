@@ -84,8 +84,6 @@ int main(int argc, char* argv[])
                 usleep(250000);
                 for(j=0;j<28;++j)
                     printf("\b");
-                /*cout<<"  .";
-                usleep(200000);*/
             }
                 printf("  ");
             for(int j=0;j<25;++j)
