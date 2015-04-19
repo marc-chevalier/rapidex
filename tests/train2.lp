@@ -1,0 +1,13 @@
+MAXIMIZE
+x1-x2
+
+SUBJECT TO
+
+
+BOUNDS
+1<=x1<=2
+5<=x2<=11
+
+VARIABLES
+x1
+x2
