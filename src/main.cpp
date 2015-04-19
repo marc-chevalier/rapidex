@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
         cout<<"--funky                  Amélioration du dual et de la détermination d'un axe divergent"<<endl;
         cout<<"-v / --verbose           Verbose"<<endl;
         cout<<"--the                    Essayez avec -v"<<endl;
+        cout<<"--lait                   Essayez avec -v"<<endl;
         cout<<"-y / -n                  Essayez avec -v"<<endl<<endl;
         cout<<"-h / --help              Vous y êtes"<<endl<<endl;
         return EXIT_SUCCESS;
@@ -66,7 +67,9 @@ int main(int argc, char* argv[])
         if(arguments.getOption("-the"))
         {
             cout<<"  Voici."<<endl;
-            cout<<"  Je n'ai pas de sucre, désolé"<<endl;
+            cout<<"  Je n'ai pas de sucre, désolé. Du lait ? (--lait)"<<endl;
+            if(arguments.getOption("-lait"))
+                cout<<"  Vous en avez assez ? Très bien."<<endl;
             cout<<"  Buvez, je vous en prie."<<endl;
             cout<<"  Absorbtion du thé : "<<endl;
             for(int i=0;i<10;++i)
