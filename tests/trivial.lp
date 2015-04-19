@@ -1,0 +1,12 @@
+MINIMIZE
+x_1
+
+SUBJECT TO
+
+BOUNDS
+
+x_1>=0
+
+VARIABLES
+
+x_1
