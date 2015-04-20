@@ -21,7 +21,7 @@ void LatexPrinter::close()
         finaliseCodeMinimal();
         file.close();
         if(compiler != "")
-            system((compiler+" "+filename+" > /dev/null").c_str());
+            system((compiler+" "+filename+" > log.log").c_str());
     }
 }
 

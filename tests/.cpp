@@ -173,7 +173,6 @@ string genRandomName()
     names.push_back("\\vdash");
     names.push_back("\\Vdash");
     names.push_back("\\vDash");
-    names.push_back("\\VDash");
     names.push_back("\\looparrowleft");
     names.push_back("\\looparrowright");
     names.push_back("\\forall");

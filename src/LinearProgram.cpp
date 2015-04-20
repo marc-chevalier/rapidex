@@ -298,11 +298,11 @@ void LinearProgram::toPositiveVariables()
         if(inf.count(variable) != 0)
         {
             deletedVariables.insert(variable);
-            newVariables.insert('^'+variable);
-            inf['^'+variable] = 0;
+            newVariables.insert("\\uparrow "+variable);
+            inf["\\uparrow "+variable] = 0;
 
             unordered_map<string, mpq_class> subst;
-            subst['^'+variable] = 1;
+            subst["\\uparrow "+variable] = 1;
             subst[""] = inf.at(variable);
 
             size_t size = constraints.size();
@@ -316,7 +316,7 @@ void LinearProgram::toPositiveVariables()
 
             if(sup.count(variable) != 0)
             {
-                sup['^'+variable] = sup.at(variable) - inf.at(variable);
+                sup["\\uparrow "+variable] = sup.at(variable) - inf.at(variable);
                 sup.erase(variable);
             }
             inf.erase(variable);
@@ -324,11 +324,11 @@ void LinearProgram::toPositiveVariables()
         else if(sup.count(variable) != 0)
         {
             deletedVariables.insert(variable);
-            newVariables.insert('_'+variable);
-            inf['_'+variable] = 0;
+            newVariables.insert("\\downarrow "+variable);
+            inf["\\downarrow "+variable] = 0;
 
             unordered_map<string, mpq_class> subst;
-            subst['_'+variable] = -1;
+            subst["\\downarrow "+variable] = -1;
             subst[""] = sup.at(variable);
 
             size_t size = constraints.size();
@@ -344,14 +344,14 @@ void LinearProgram::toPositiveVariables()
         else
         {
             deletedVariables.insert(variable);
-            newVariables.insert('^'+variable);
-            newVariables.insert('_'+variable);
-            inf['^'+variable] = 0;
-            inf['_'+variable] = 0;
+            newVariables.insert("\\uparrow "+variable);
+            newVariables.insert("\\downarrow "+variable);
+            inf["\\uparrow "+variable] = 0;
+            inf["\\downarrow "+variable] = 0;
 
             unordered_map<string, mpq_class> subst;
-            subst['^'+variable] = 1;
-            subst['_'+variable] = -1;
+            subst["\\uparrow "+variable] = 1;
+            subst["\\downarrow "+variable] = -1;
 
             size_t size = constraints.size();
             for(size_t i=0;i<size;++i)
@@ -419,7 +419,8 @@ void LinearProgram::toAlmostCanonical()
     cout<<"Après toLeft (final)"<<endl;
 #endif
 #ifndef DEBUG
-    cout<<"Final"<<endl;
+    if(verbose)
+        cout<<"Final"<<endl;
 #endif
     if(verbose)
         print();
@@ -452,7 +453,8 @@ void LinearProgram::toCanonical()
     cout<<"Après toLeftCteRight (final)"<<endl;
 #endif
 #ifndef DEBUG
-    cout<<"Final"<<endl;
+    if(verbose)
+        cout<<"Final"<<endl;
 #endif
     if(verbose)
         print();
