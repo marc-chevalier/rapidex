@@ -68,7 +68,22 @@ id          [a-zA-Z_][a-zA-Z0-9_]*
 }
 
 {id}  {
-  yylval->str = new std::string(yytext);
+  string s;
+  string text(yytext);
+  int nbBrackets = 0;
+  for(int i=0;i<text.size();++i)
+  {
+    if(text[i] == '_')
+    {
+      s += "_{";
+      ++nbBrackets;
+    }
+    else
+      s += text[i];
+  }
+  for(int i=0;i<nbBrackets;++i)
+    s += '}';
+  yylval->str = new std::string(s);
   if(verbose){cout<<"VARIABLE("<<*yylval->str<<") ";}
   return(token::VARIABLE);
 }
