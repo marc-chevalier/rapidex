@@ -191,13 +191,13 @@ void Dictionary::pivot(int enteringVariable, int leavingVariable)
 
     for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
         if(constraint.first != leavingVariable)
-            newDictionary[constraint.first] = LinearAlgebra::substitution(constraint.second, isolation, enteringVariable);
+            LinearAlgebra::substitution(newDictionary[constraint.first], constraint.second, isolation, enteringVariable);
 
     newDictionary[enteringVariable] = isolation;
 
     dictionary = newDictionary;
 
-    objective = LinearAlgebra::substitution(objective, isolation, enteringVariable);
+    LinearAlgebra::substitution(objective, isolation, enteringVariable);
 }
 
 unordered_map<int, mpq_class> Dictionary::isolateEnteringVariable(const unordered_map<int, mpq_class>& expression, int enteringVariable, int leavingVariable) const

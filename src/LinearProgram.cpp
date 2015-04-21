@@ -128,16 +128,17 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
         else
             objective[-1] = terme.second;
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDictionary.getDictionary())
-        objective = LinearAlgebra::substitution(objective, constraint.second, constraint.first);
+    unordered_map<int, unordered_map<int, mpq_class>> finalDict = finalDictionary.getDictionary();
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDictionary.getDictionary())
+    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDict)
+        LinearAlgebra::substitution(objective, constraint.second, constraint.first);
+
+    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDict)
         for(pair<int, mpq_class> terme : constraint.second)
             if(terme.first != 0)
                 dictionary[constraint.first][terme.first] = terme.second;
 
     objective.erase(0);
-    LinearAlgebra::simplify(objective);
 
     return Dictionary(dictionary, objective);
 }
@@ -225,7 +226,7 @@ void LinearProgram::toMaximization()
     if(objectiveType == MINIMIZE)
     {
         objectiveType = MAXIMIZE;
-        objectiveFunction = LinearAlgebra::scalarMultiplication(-1, objectiveFunction);
+        LinearAlgebra::scalarMultiplication(-1, objectiveFunction);
     }
 }
 
@@ -234,7 +235,7 @@ void LinearProgram::toLeft()
     size_t size = constraints.size();
     for(size_t i=0; i<size; ++i)
     {
-        get<0>(constraints[i]) = LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
+        LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
         get<2>(constraints[i]).clear();
     }
 }
@@ -244,7 +245,7 @@ void LinearProgram::toLeftCteRight()
     size_t size = constraints.size();
     for(size_t i=0; i<size; ++i)
     {
-        get<0>(constraints[i]) = LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
+        LinearAlgebra::minus(get<0>(constraints[i]), get<2>(constraints[i]));
         get<2>(constraints[i]).clear();
         if(get<0>(constraints[i]).count("")>0)
         {
@@ -261,9 +262,9 @@ void LinearProgram::toGE()
     {
         if(get<1>(constraints[i]) == LE)
         {
-            get<0>(constraints[i]) = LinearAlgebra::scalarMultiplication(-1, get<0>(constraints[i]));
+            LinearAlgebra::scalarMultiplication(-1, get<0>(constraints[i]));
             get<1>(constraints[i]) = GE;
-            get<2>(constraints[i]) = LinearAlgebra::scalarMultiplication(-1, get<2>(constraints[i]));
+            LinearAlgebra::scalarMultiplication(-1, get<2>(constraints[i]));
         }
         else if(get<1>(constraints[i]) == EQ)
         {
@@ -280,9 +281,9 @@ void LinearProgram::toLEOrEQ()
     {
         if(get<1>(constraints[i]) == GE)
         {
-            get<0>(constraints[i]) = LinearAlgebra::scalarMultiplication(-1, get<0>(constraints[i]));
+            LinearAlgebra::scalarMultiplication(-1, get<0>(constraints[i]));
             get<1>(constraints[i]) = LE;
-            get<2>(constraints[i]) = LinearAlgebra::scalarMultiplication(-1, get<2>(constraints[i]));
+            LinearAlgebra::scalarMultiplication(-1, get<2>(constraints[i]));
         }
     }
 }
@@ -306,10 +307,10 @@ void LinearProgram::toPositiveVariables()
             size_t size = constraints.size();
             for(size_t i=0;i<size;++i)
             {
-                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
-                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
             }
-            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            LinearAlgebra::substitution(objectiveFunction, subst, variable);
             substs[variable] = subst;
 
             if(sup.count(variable) != 0)
@@ -332,10 +333,10 @@ void LinearProgram::toPositiveVariables()
             size_t size = constraints.size();
             for(size_t i=0;i<size;++i)
             {
-                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
-                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
             }
-            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            LinearAlgebra::substitution(objectiveFunction, subst, variable);
             substs[variable] = subst;
             sup.erase(variable);
         }
@@ -354,10 +355,10 @@ void LinearProgram::toPositiveVariables()
             size_t size = constraints.size();
             for(size_t i=0;i<size;++i)
             {
-                get<0>(constraints[i]) = LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
-                get<2>(constraints[i]) = LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<0>(constraints[i]), subst, variable);
+                LinearAlgebra::substitution(get<2>(constraints[i]), subst, variable);
             }
-            objectiveFunction = LinearAlgebra::substitution(objectiveFunction, subst, variable);
+            LinearAlgebra::substitution(objectiveFunction, subst, variable);
             substs[variable] = subst;
         }
     }
