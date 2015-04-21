@@ -148,6 +148,7 @@ int main(int argc, char* argv[])
     else
         nameDispenser = new StandardVariableNameDispenser();
     string variableName = nameDispenser->genNewVariable(lp.getVariables());
+
     Simplex::SolutionType solutionType = simplex.solve(variableName);
     delete nameDispenser;
 

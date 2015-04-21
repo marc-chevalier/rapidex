@@ -91,10 +91,9 @@ Dictionary LinearProgram::firstPhaseDictionary()
 {
     unordered_map<int, unordered_map<int, mpq_class>> dictionary;
     unordered_map<int, mpq_class> objective;
-
     toAlmostCanonical();
     int i = 1;
-    for(string variable : variables)
+    for(const string& variable : variables)
     {
         if(variable == "")
             continue;
@@ -103,9 +102,9 @@ Dictionary LinearProgram::firstPhaseDictionary()
         ++i;
     }
 
-    for(tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>> constraint : constraints)
+    for(const tuple<unordered_map<string, mpq_class>, Relation, unordered_map<string, mpq_class>>& constraint : constraints)
     {
-        for(pair<string, mpq_class> terme : get<0>(constraint))
+        for(const pair<string, mpq_class>& terme : get<0>(constraint))
             if(terme.first == "")
                 dictionary[i][-1] = terme.second;
             else
@@ -115,7 +114,6 @@ Dictionary LinearProgram::firstPhaseDictionary()
     }
 
     objective[0] = -1;
-
     return Dictionary(dictionary, objective);
 }
 
@@ -293,7 +291,7 @@ void LinearProgram::toPositiveVariables()
 {
     set<string> newVariables;
     set<string> deletedVariables;
-    for(string variable : variables)
+    for(const string& variable : variables)
     {
         if(inf.count(variable) != 0)
         {
@@ -364,14 +362,14 @@ void LinearProgram::toPositiveVariables()
         }
     }
 
-    for(string variable : newVariables)
+    for(const string& variable : newVariables)
     {
         variables.insert(variable);
         pseudoVariables.insert(variable);
         allVariables.insert(variable);
     }
 
-    for(string variable : deletedVariables)
+    for(const string& variable : deletedVariables)
         variables.erase(variable);
 }
 

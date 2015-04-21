@@ -20,7 +20,7 @@ public:
     std::unordered_map<int, std::unordered_map<int, mpq_class>> getDictionary() const;
     std::unordered_map<int, mpq_class> getObjective() const;
     bool isFirstPhaseNeeded() const;
-    void pivot(int enteringVariable, int leavingVariable);
+    void pivot(int enteringVariable, int leavingVariable) __attribute__((hot));
     void print() const;
 
 private:

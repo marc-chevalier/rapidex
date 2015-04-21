@@ -19,7 +19,7 @@ Dictionary::~Dictionary()
 
 bool Dictionary::isFirstPhaseNeeded() const
 {
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
         if(constraint.second.count(-1) != 0)
             if(constraint.second.at(-1) < 0)
                 return true;
@@ -29,7 +29,7 @@ bool Dictionary::isFirstPhaseNeeded() const
 
 bool Dictionary::isSolved() const
 {
-    for(pair<int, mpq_class> terme : objective)
+    for(const pair<int, mpq_class>& terme : objective)
         if(terme.second > 0 && terme.first > 0)
             return false;
     return true;
@@ -45,7 +45,7 @@ mpq_class Dictionary::getSolutionValue() const
 unordered_map<int, mpq_class> Dictionary::getSolutionPoint() const
 {
     unordered_map<int, mpq_class> output;
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
     {
         if(constraint.second.count(-1) == 0)
             output[constraint.first] = 0;
@@ -92,7 +92,7 @@ pair<unordered_map<int, pair<mpq_class, mpq_class>>, pair<mpq_class, mpq_class>>
 
 int Dictionary::getDivergenceVariable() const
 {
-    for(pair<int, mpq_class> terme : objective)
+    for(const pair<int, mpq_class>& terme : objective)
         if(terme.first > 0 && terme.second > 0 && isDivergenceVariable(terme.first))
             return terme.first;
     return -1;
@@ -100,7 +100,7 @@ int Dictionary::getDivergenceVariable() const
 
 bool Dictionary::isDivergenceVariable(int variable) const
 {
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
         if(constraint.second.count(variable) != 0)
             if(constraint.second.at(variable) < 0)
                 return false;
@@ -111,7 +111,7 @@ bool Dictionary::isDivergenceVariable(int variable) const
 int Dictionary::getEnteringVariable() const
 {
     int arginf = -1;
-    for(pair<int, mpq_class> terme : objective)
+    for(const pair<int, mpq_class>& terme : objective)
         if(terme.second>0 && terme.first>0)
             if(arginf == -1 || arginf > terme.first)
                 arginf = terme.first;
@@ -124,7 +124,7 @@ int Dictionary::getLeavingInitialisationVariable() const
     mpq_class inf = 0;
     int arginf = -1;
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
     {
         if(constraint.second.count(-1)==0)
         {
@@ -150,7 +150,7 @@ int Dictionary::getLeavingVariable(int enteringVariable) const
     mpq_class inf = -1;
     int arginf = -1;
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
     {
         if(constraint.second.count(enteringVariable)==0)
             continue;
@@ -189,7 +189,7 @@ void Dictionary::pivot(int enteringVariable, int leavingVariable)
     unordered_map<int, unordered_map<int, mpq_class>> newDictionary;
     unordered_map<int, mpq_class> isolation = isolateEnteringVariable(dictionary[leavingVariable], enteringVariable, leavingVariable);
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : dictionary)
         if(constraint.first != leavingVariable)
             newDictionary[constraint.first] = LinearAlgebra::substitution(constraint.second, isolation, enteringVariable);
 
@@ -205,7 +205,7 @@ unordered_map<int, mpq_class> Dictionary::isolateEnteringVariable(const unordere
     unordered_map<int, mpq_class> output;
     mpq_class coeffEnteringVariable = expression.at(enteringVariable);
 
-    for(pair<int, mpq_class> terme : expression)
+    for(const pair<int, mpq_class>& terme : expression)
         if(terme.first != enteringVariable)
             output[terme.first] = -terme.second/coeffEnteringVariable;
 

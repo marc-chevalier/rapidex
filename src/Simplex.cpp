@@ -106,7 +106,7 @@ Simplex::SolutionType Simplex::firstPhase()
         if(verboseLatex)
             latex.appendString("La première phase n'est pas utile : 0 appartient au polytope. ");
         if(verbose)
-        cout<<"Inutile"<<endl;
+            cout<<"Inutile"<<endl;
         return SOLUTION;
     }
 
