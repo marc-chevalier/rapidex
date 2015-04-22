@@ -102,15 +102,10 @@ template<typename T> void LinearAlgebra::sum(std::unordered_map<T, mpq_class>& r
         result[terme.first] = terme.second;
 
     for(const pair_t& terme : rhs)
-        if(result.count(terme.first) != 0)
-        {
-            if(result[terme.first] == -terme.second)
-                result.erase(terme.first);
-        }
+        if(result[terme.first] == -terme.second)
+            result.erase(terme.first);
         else
-            result[terme.first] += terme.second;
-
-    simplify(result);
+            lhs[terme.first] += terme.second;
 }
 
 template<typename T> void LinearAlgebra::sum(std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs)
@@ -119,11 +114,8 @@ template<typename T> void LinearAlgebra::sum(std::unordered_map<T, mpq_class>& l
     typedef typename std::pair<T, mpq_class> pair_t;
 
     for(const pair_t& terme : rhs)
-        if(lhs.count(terme.first) != 0)
-        {
-            if(lhs[terme.first] == -terme.second)
-                lhs.erase(terme.first);
-        }
+        if(lhs[terme.first] == -terme.second)
+            lhs.erase(terme.first);
         else
             lhs[terme.first] += terme.second;
 }
@@ -159,13 +151,10 @@ template<typename T> void LinearAlgebra::minus(std::unordered_map<T, mpq_class>&
         result[terme.first] = terme.second;
 
     for(const pair_t& terme : rhs)
-        if(result.count(terme.first) != 0)
-        {
-            if(result[terme.first] == terme.second)
-                result.erase(terme.first);
-        }
+        if(result[terme.first] == terme.second)
+            result.erase(terme.first);
         else
-            result[terme.first] -= terme.second;
+            lhs[terme.first] -= terme.second;
 
     return result;
 }
@@ -175,15 +164,9 @@ template<typename T> void LinearAlgebra::minus(std::unordered_map<T, mpq_class>&
     typedef typename std::unordered_map<T, mpq_class> unordered_map_t;
     typedef typename std::pair<T, mpq_class> pair_t;
 
-    lhs = LinearAlgebra::minus_old(lhs, rhs);
-    return;
-
     for(const pair_t& terme : rhs)
-        if(lhs.count(terme.first) != 0)
-        {
-            if(lhs[terme.first] == terme.second)
-                lhs.erase(terme.first);
-        }
+        if(lhs[terme.first] == terme.second)
+            lhs.erase(terme.first);
         else
             lhs[terme.first] -= terme.second;
 }
