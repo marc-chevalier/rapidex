@@ -217,7 +217,7 @@ unordered_map<int, mpq_class> Dictionary::isolateEnteringVariable(const unordere
 
 void Dictionary::print() const
 {
-    for(pair<int, unordered_map<int, mpq_class>> c : dictionary)
+    for(const pair<int, unordered_map<int, mpq_class>>& c : dictionary)
     {
         cout<<"x_"<<c.first<<" = ";
         if(c.second.count(-1) != 0)

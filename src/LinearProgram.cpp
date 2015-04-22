@@ -130,10 +130,10 @@ Dictionary LinearProgram::secondPhaseDictionary(const Dictionary& finalDictionar
 
     unordered_map<int, unordered_map<int, mpq_class>> finalDict = finalDictionary.getDictionary();
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDict)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : finalDict)
         LinearAlgebra::substitution(objective, constraint.second, constraint.first);
 
-    for(pair<int, unordered_map<int, mpq_class>> constraint : finalDict)
+    for(const pair<int, unordered_map<int, mpq_class>>& constraint : finalDict)
         for(pair<int, mpq_class> terme : constraint.second)
             if(terme.first != 0)
                 dictionary[constraint.first][terme.first] = terme.second;
@@ -167,7 +167,7 @@ unordered_map<string, mpq_class> LinearProgram::getSolution(unordered_map<int, m
         cout<<coord.first << "=>"<<coord.second<<endl;
 #endif
 
-	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
+	for(const pair<string, unordered_map<string, mpq_class>>& subst : substs)
 		output[subst.first] = applySubst(solution, subst.second);
 
 	for(string pseudoVariable : pseudoVariables)
@@ -202,14 +202,14 @@ unordered_map<string, pair<mpq_class, mpq_class>> LinearProgram::getDivergenceAx
 {
     unordered_map<string, pair<mpq_class, mpq_class>> output;
 
-	for(pair<string, unordered_map<string, mpq_class>> subst : substs)
+	for(const pair<string, unordered_map<string, mpq_class>>& subst : substs)
 		output[subst.first] = applySubst(axis, subst.second);
 
 	for(string pseudoVariable : pseudoVariables)
 		axis.erase(variablesCorrespondence.at(pseudoVariable));
 
     size_t size = reverseVariablesCorrespondence.size();
-	for(pair<int, pair<mpq_class, mpq_class>> coordonnee : axis)
+	for(const pair<int, pair<mpq_class, mpq_class>>& coordonnee : axis)
         if(coordonnee.first >= 1 && static_cast<size_t>(coordonnee.first-1) < size)
             output[reverseVariablesCorrespondence[static_cast<size_t>(coordonnee.first-1)]] = coordonnee.second;
 
