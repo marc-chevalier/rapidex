@@ -16,3 +16,4 @@ parser/SimplexParser.cpp
 parser/SimplexLexer.cpp
 parser/location.hh
 parser/position.hh
+*.zip
