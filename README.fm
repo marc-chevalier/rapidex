@@ -24,10 +24,16 @@ Les options.
 
 --funky : améliore l'heuristique de génération de noms de variables pour un axe de divergence ou le problème dual. Ils sont faits pour être joli une fois compilés en LaTeX. Profitez en bien ! Toutefois, cette heuristique est plus lente et finit plus rapidement par ne plus avoir de possibilité : à éviter sur les gros problèmes.
 
--v / --verbose : Affiche des informations supplémentaires lors de la résolution.
+-v / --verbose : Affiche des informations supplémentaires lors de la résolution. Mise en garde : rapidex a tendance à raconter sa vie.
+
+--the : Ajoute un peu de piment au mode verbeux. Essayez pour voir !
+
+--lait : Interagit avec --the. On vous expliquera...
+
+-y / -n : Encore des interactions avec --the. Vous verrez bien !
 
 NB : --tex et --dvi sont incompatibles.
-NB : on profite mieux de --funky dans la version compilée.
+NB : on profite mieux de --funky dans le LaTeX compilée.
 
 Fonctionnalités.
 
@@ -39,6 +45,6 @@ Rapidex est fait pour vous ! Grâce à un savant mélange d'algèbre linéaire e
 
 Rapidex sait résoudre tout type de systèmes, à variables non nécessairement positives. Mais ce n'est pas tout ! Rapidex peut aussi prendre des coefficients fractionnaires. D'autre part, chaque coté des inégalités est une combinaison linéaire quelconque : il peut y avoir des variables présentes plusieurs fois (-5x+2y-1+2x+4 est valide et sera correctement interprété), l'expression peut commencer avec '+' ou non si la première variable est positive.
 
-D'autre part, quand il y a une solution, il sera trop heureux de vous la donner. De même si le domaine est vide. Rapidex pourra aussi prétendre que le domaine n'est pas borné. Vous faudra-t-il le croire sur parole ? Non ! Il fournira une droite faisait diverger la fonction objectif et qui est dans le domaine (cette droite est en fait une arête infinie).
+D'autre part, quand il y a une solution, il sera trop heureux de vous la donner. De même si le domaine est vide. Rapidex pourra aussi prétendre que le domaine n'est pas borné. Vous faudra-t-il le croire sur parole ? Non ! Il fournira une demi-droite faisait diverger la fonction objectif et qui est dans le domaine (cette droite est en fait une arête infinie).
 
 
