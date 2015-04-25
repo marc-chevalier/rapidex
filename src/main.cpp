@@ -159,7 +159,6 @@ int main(int argc, char* argv[])
         unordered_map<string, mpq_class> solution(simplex.getSol());
         for(pair<string, mpq_class> coord : solution)
             cout<<"  "<<coord.first<<" = "<<coord.second<<endl;
-        cout<<"Solution = "<<simplex.getOpt()<<endl;
     }
     else if(solutionType == Simplex::EMPTY)
     {
