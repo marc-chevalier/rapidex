@@ -19,29 +19,8 @@ public:
     template<typename T> static void substitution(std::unordered_map<T, mpq_class>& expression, const std::unordered_map<T, mpq_class>& substitutionExpression, T substitutedVariable) __attribute__((hot));
     template<typename T> static void simplify(std::unordered_map<T, mpq_class>& expression) __attribute__((hot));
 
-    template<typename T> static std::unordered_map<T, mpq_class> scalarMultiplication_old(mpq_class lhs, const std::unordered_map<T, mpq_class>& rhs) __attribute__((hot));
-    template<typename T> static std::unordered_map<T, mpq_class> sum_old(const std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs) __attribute__((hot));
-    template<typename T> static std::unordered_map<T, mpq_class> minus_old(const std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs) __attribute__((hot));
     template<typename T> static std::unordered_map<T, mpq_class> substitution_old(const std::unordered_map<T, mpq_class>& expression, const std::unordered_map<T, mpq_class>& substitutionExpression, T substitutedVariable) __attribute__((hot));
 };
-
-template<typename T> std::unordered_map<T, mpq_class> LinearAlgebra::scalarMultiplication_old(mpq_class lhs, const std::unordered_map<T, mpq_class>& rhs)
-{
-    typedef typename std::unordered_map<T, mpq_class> unordered_map_t;
-    typedef typename std::pair<T, mpq_class> pair_t;
-    unordered_map_t output;
-
-    if(lhs == 0)
-        return output;
-
-    for(const pair_t& terme : rhs)
-        output[terme.first] = lhs * terme.second;
-
-    simplify(output);
-
-    return output;
-}
-
 
 
 template<typename T> void LinearAlgebra::scalarMultiplication(std::unordered_map<T, mpq_class>& result, mpq_class lhs, const std::unordered_map<T, mpq_class>& rhs)
@@ -68,26 +47,6 @@ template<typename T> void LinearAlgebra::scalarMultiplication(mpq_class lhs, std
     else
         for(const pair_t& terme : rhs)
             rhs[terme.first] *= lhs;
-}
-
-template<typename T> std::unordered_map<T, mpq_class> LinearAlgebra::sum_old(const std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs)
-{
-    typedef typename std::unordered_map<T, mpq_class> unordered_map_t;
-    typedef typename std::pair<T, mpq_class> pair_t;
-    unordered_map_t output;
-
-    for(const pair_t& terme : lhs)
-        output[terme.first] = terme.second;
-
-    for(const pair_t& terme : rhs)
-        if(output[terme.first] == -terme.second)
-            output.erase(terme.first);
-        else
-            output[terme.first] += terme.second;
-
-    simplify(output);
-
-    return output;
 }
 
 
@@ -119,25 +78,6 @@ template<typename T> void LinearAlgebra::sum(std::unordered_map<T, mpq_class>& l
         else
             lhs[terme.first] += terme.second;
 }
-
-template<typename T> std::unordered_map<T, mpq_class> LinearAlgebra::minus_old(const std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs)
-{
-    typedef typename std::unordered_map<T, mpq_class> unordered_map_t;
-    typedef typename std::pair<T, mpq_class> pair_t;
-    unordered_map_t output;
-
-    for(const pair_t& terme : lhs)
-        output[terme.first] = terme.second;
-
-    for(const pair_t& terme : rhs)
-        if(output[terme.first] == terme.second)
-            output.erase(terme.first);
-        else
-            output[terme.first] -= terme.second;
-
-    return output;
-}
-
 
 
 template<typename T> void LinearAlgebra::minus(std::unordered_map<T, mpq_class>& result, const std::unordered_map<T, mpq_class>& lhs, const std::unordered_map<T, mpq_class>& rhs)
