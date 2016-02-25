@@ -14,9 +14,9 @@ vector<string> StandardVariableNameDispenser::genNewVariables(size_t nbr, const 
     vector<string> output;
 
     for(size_t i=0, j=0; i<nbr; ++j)
-        if(reserved.count("y_"+to_string(j))==0)
+        if(reserved.count("y_{"+to_string(j)+"}")==0)
         {
-            output.push_back("y_"+to_string(j));
+            output.push_back("y_{"+to_string(j)+"}");
             ++i;
         }
 
@@ -33,9 +33,9 @@ string StandardVariableNameDispenser::genNewVariable(const set<string>& reserved
     }
 
     for(size_t i=0, j=0; i<1; ++j)
-        if(reserved.count("t_"+to_string(j))==0)
+        if(reserved.count("t_{"+to_string(j)+"}")==0)
         {
-            output = "t_"+to_string(j);
+            output = "t_{"+to_string(j)+"}";
             ++i;
         }
 

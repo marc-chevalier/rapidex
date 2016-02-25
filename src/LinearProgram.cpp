@@ -645,8 +645,8 @@ void LinearProgram::print(Relation rel) const
     {
         case EQ: cout<<"=="; break;
         case LE: cout<<"<="; break;
-        case GE: cout<<">="; break;
-        default: cout<<""; break;
+        case GE:
+        default: cout<<">="; break;
     }
 }
 

@@ -167,8 +167,8 @@ void LatexPrinter::appendLinearProgram(const string& linearProgramName, const Li
         {
             case LinearProgram::LE : file << " & \\leqslant"; break;
             case LinearProgram::GE : file << " & \\geqslant"; break;
-            case LinearProgram::EQ : file << " & = "; break;
-            default : file << "";break;
+            case LinearProgram::EQ :
+            default : file << " & = "; break;
         }
 
         first = true;
@@ -230,8 +230,8 @@ void LatexPrinter::appendLinearProgram(const string& linearProgramName, const Li
         {
             case LinearProgram::LE : file << " & \\leqslant"; break;
             case LinearProgram::GE : file << " & \\geqslant"; break;
-            case LinearProgram::EQ : file << " & = "; break;
-            default : file << "";break;
+            case LinearProgram::EQ :
+            default : file << " & = "; break;
         }
         get<2>(bound).canonicalize();
         if(get<2>(bound) == 0)

@@ -49,8 +49,8 @@ using namespace std;
 %start Input
 
 %language "C++"
-%define namespace "SimplexParser"
-%define parser_class_name "Parser"
+%define api.namespace {SimplexParser}
+%define parser_class_name {Parser}
 %parse-param {Driver &driver}
 %locations
 

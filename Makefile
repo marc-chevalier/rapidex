@@ -1,10 +1,10 @@
-CC=g++ -lgmpxx -lgmp
+CC=clang++
 C11=-std=c++11
 FLAGSBASE= -O3 -W -Wextra -Wcast-qual -Wcast-align -Wfloat-equal -Wshadow -Wpointer-arith -Wunreachable-code -Wchar-subscripts -Wcomment -Wformat -Werror-implicit-function-declaration -Wmain -Wmissing-braces -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wuninitialized -Wreorder -Wundef -Wwrite-strings -Wsign-compare -Wmissing-declarations -Wswitch-default
 NAZIBASE= $(FLAGSBASE) -pedantic -Wconversion -Wmissing-noreturn -Wold-style-cast -Weffc++ -Wall -Wunused -Wsign-conversion -Wunused -Wstrict-aliasing -Wstrict-overflow -Wconversion -Wdisabled-optimization
-NAZI= $(NAZIBASE) -Wsuggest-attribute=const -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wlogical-op
+NAZI= $(NAZIBASE)
 CFLAGS=$(NAZI)
-LDFLAGS=
+LDFLAGS=-lgmpxx -lgmp
 EXEC=setup rapidex
 EXECLATEX=setup rapidexlatex
 LEX=flex
@@ -52,10 +52,10 @@ DEPS := $(patsubst src/%.c,obj/%.d,$(patsubst src/%.cpp,obj/%.d,$(SRCS)))
 
 all: $(EXEC)
 
-latex: CC=g++ -lgmpxx -lgmp -D LATEX
+latex: CC=clang++ -D LATEX
 latex: $(EXEC)
 
-debug: CC=g++ -lgmpxx -lgmp -D DEBUG
+debug: CC=clang++ -D DEBUG
 debug: $(EXEC)
 
 purge: clean all
@@ -85,7 +85,7 @@ parser/SimplexParser.cpp: parser/SimplexParser.y
 	@mkdir -p $(dir $@)
 	@$(BUILD_CMD)
 
-obj/SimplexLexer.o: CMD = $(CC) $(C11) -c $< -o $@ -MD -MT '$@' -MF '$(patsubst obj/%.o,obj/%.d,$@)'
+obj/SimplexLexer.o: CMD = $(CC) $(C11) -Wno-deprecated-register -c $< -o $@ -MD -MT '$@' -MF '$(patsubst obj/%.o,obj/%.d,$@)'
 obj/SimplexLexer.o: parser/SimplexLexer.cpp
 	@$(PRINT_CC)
 	@mkdir -p $(dir $@)
